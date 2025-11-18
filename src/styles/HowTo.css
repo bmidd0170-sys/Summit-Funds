@@ -2,6 +2,8 @@
 
 .howto-container {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background-color: #f8f9fa;
   color: #333;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -62,34 +64,39 @@
 .howto-hero {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 4rem 3rem;
+  padding: 2rem 3rem 1rem 3rem;
   text-align: center;
 }
 
 .howto-hero h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  margin-bottom: 0.3rem;
 }
 
 .howto-hero p {
-  font-size: 1.3rem;
+  font-size: 0.95rem;
   opacity: 0.95;
 }
 
 /* Steps Section */
 .steps {
-  padding: 4rem 3rem;
+  padding: 1.5rem 3rem;
   max-width: 900px;
   margin: 0 auto;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .step {
   display: grid;
-  grid-template-columns: 80px 1fr;
-  gap: 2rem;
-  margin-bottom: 3rem;
+  grid-template-columns: 70px 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
   background-color: white;
-  padding: 2rem;
+  padding: 1.2rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
@@ -97,28 +104,28 @@
 .step-number {
   background-color: #667eea;
   color: white;
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   flex-shrink: 0;
 }
 
 .step-content h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
   color: #333;
 }
 
 .step-content p {
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 0.9rem;
+  line-height: 1.5;
   color: #666;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.8rem;
 }
 
 .step-example {
@@ -199,23 +206,29 @@
 
 /* Final Result */
 .final-result {
-  padding: 4rem 3rem;
-  background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1.5rem 3rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .final-result h2 {
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .result-card {
   background-color: rgba(255, 255, 255, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.3);
-  padding: 3rem;
+  padding: 1.2rem;
   border-radius: 12px;
   backdrop-filter: blur(10px);
+  max-width: 700px;
+  width: 100%;
 }
 
 .result-card h3 {
@@ -254,23 +267,27 @@
 
 /* FAQ Section */
 .faq {
-  padding: 4rem 3rem;
+  padding: 1.5rem 3rem;
   background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .faq h2 {
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
   color: #333;
 }
 
 .faq-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
   max-width: 1000px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .faq-item {
@@ -294,20 +311,20 @@
 
 /* How-to CTA */
 .howto-cta {
-  padding: 4rem 3rem;
-  background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1.5rem 3rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   text-align: center;
   color: white;
 }
 
 .howto-cta h2 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
 }
 
 .howto-cta p {
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
 }
 
 .cta-primary {
@@ -336,9 +353,10 @@
 .howto-footer {
   background-color: #333;
   color: white;
-  padding: 2rem 3rem;
+  padding: 1rem 3rem;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  margin-top: auto;
 }
 
 .footer-links {
