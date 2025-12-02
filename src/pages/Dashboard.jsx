@@ -1,290 +1,175 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import '../styles/Dashboard.css'
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useState, useEffect } from "react";
+import BudgetDisplay from "../components/BudgetDisplay";
+import "../styles/Dashboard.css";
 
 export default function Dashboard() {
-  const navigate = useNavigate()
-  const { user, logout } = useAuth()
-  const [budget, setBudget] = useState(null)
-  const [loading, setLoading] = useState(true)
+	const navigate = useNavigate();
+	const location = useLocation();
+	const { user, logout } = useAuth();
+	const [activeBudgetKey, setActiveBudgetKey] = useState(null);
+	const [activeBudgetData, setActiveBudgetData] = useState(null);
+	const [showBudget, setShowBudget] = useState(false);
 
-  useEffect(() => {
-    // TODO: Fetch budget from Firestore
-    // For now, load from localStorage
-    const savedBudget = localStorage.getItem('userBudget')
-    if (savedBudget) {
-      setBudget(JSON.parse(savedBudget))
-    }
-    setLoading(false)
-  }, [])
+	useEffect(() => {
+		// Find the active/most recent budget
+		const metadata = localStorage.getItem("budgetMetadata");
+		if (metadata) {
+			const parsedMetadata = JSON.parse(metadata);
+			const sortedKeys = Object.keys(parsedMetadata).sort().reverse();
+			
+			if (sortedKeys.length > 0) {
+				const latestKey = sortedKeys[0];
+				const latestMetadata = parsedMetadata[latestKey];
+				
+				if (latestMetadata.status === "active") {
+					setActiveBudgetKey(latestKey);
+					setActiveBudgetData({ metadata: latestMetadata });
+					setShowBudget(true);
+				}
+			}
+		}
+	}, []);
 
-  const handleLogout = async () => {
-    try {
-      await logout()
-      navigate('/')
-    } catch (err) {
-      console.error('Logout failed:', err)
-    }
-  }
+	// Poll for budget breakdown completion
+	useEffect(() => {
+		if (!activeBudgetKey || !activeBudgetData?.metadata?.generating) {
+			return;
+		}
 
-  const handleCreateBudget = () => {
-    navigate('/budget-form')
-  }
+		const pollInterval = setInterval(() => {
+			const breakdowns = localStorage.getItem("budgetBreakdowns");
+			if (breakdowns) {
+				const parsedBreakdowns = JSON.parse(breakdowns);
+				if (parsedBreakdowns[activeBudgetKey]) {
+					setActiveBudgetData(prev => ({
+						...prev,
+						breakdown: parsedBreakdowns[activeBudgetKey]
+					}));
 
-  // Calculate budget tiers
-  const calculateBudgetTiers = () => {
-    if (!budget) return null
+					// Update metadata to mark as not generating
+					const metadata = localStorage.getItem("budgetMetadata");
+					if (metadata) {
+						const parsedMetadata = JSON.parse(metadata);
+						parsedMetadata[activeBudgetKey].generating = false;
+						localStorage.setItem("budgetMetadata", JSON.stringify(parsedMetadata));
+						setActiveBudgetData(prev => ({
+							...prev,
+							metadata: parsedMetadata[activeBudgetKey]
+						}));
+					}
 
-    const income = parseFloat(budget.monthlyIncome) || 0
+					clearInterval(pollInterval);
+				}
+			}
+		}, 1000); // Poll every second
 
-    // Calculate essentials
-    const essentials =
-      (parseFloat(budget.housing) || 0) +
-      (parseFloat(budget.utilities) || 0) +
-      (parseFloat(budget.groceries) || 0) +
-      (parseFloat(budget.transportation) || 0) +
-      (parseFloat(budget.insurance) || 0) +
-      (parseFloat(budget.phone) || 0) +
-      (parseFloat(budget.internet) || 0) +
-      (parseFloat(budget.creditCardPayment) || 0) +
-      (parseFloat(budget.studentLoan) || 0) +
-      (parseFloat(budget.personalLoan) || 0)
+		// Stop polling after 2 minutes
+		const timeout = setTimeout(() => clearInterval(pollInterval), 120000);
 
-    // Calculate discretionary
-    const discretionary =
-      (parseFloat(budget.dining) || 0) +
-      (parseFloat(budget.entertainment) || 0) +
-      (parseFloat(budget.subscriptions) || 0) +
-      (parseFloat(budget.shopping) || 0) +
-      (parseFloat(budget.gym) || 0)
+		return () => {
+			clearInterval(pollInterval);
+			clearTimeout(timeout);
+		};
+	}, [activeBudgetKey, activeBudgetData?.metadata?.generating]);
 
-    // Calculate available for goals + emergency fund
-    const available = income - essentials - discretionary
-    const emergencyFund = parseFloat(budget.emergencyFund) || available * 0.2
-    const goalSavings = available - emergencyFund
+	const handleLogout = async () => {
+		try {
+			await logout();
+			navigate("/");
+		} catch (err) {
+			console.error("Logout failed:", err);
+		}
+	};
 
-    return {
-      income,
-      essentials,
-      discretionary,
-      emergencyFund,
-      goalSavings,
-      total: essentials + discretionary + emergencyFund + goalSavings,
-    }
-  }
+	// Calculate current progression in budget plan
+	const calculateProgression = (metadata) => {
+		if (!metadata) return 0;
 
-  const tiers = calculateBudgetTiers()
+		const startDate = new Date(metadata.startDate);
+		const endDate = new Date(metadata.endDate);
+		const now = new Date();
 
-  if (loading) {
-    return (
-      <div className="dashboard-container">
-        <p>Loading...</p>
-      </div>
-    )
-  }
+		const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+		const elapsedDays = Math.ceil((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
 
-  return (
-    <div className="dashboard-container">
-      {/* Header */}
-      <header className="dashboard-header">
-        <div className="header-left">
-          <div className="logo">💰 Summit Funds</div>
-          <div className="header-title">
-            <h1>Dashboard</h1>
-            <p>Welcome, {user?.email}</p>
-          </div>
-        </div>
-        <button className="btn-logout" onClick={handleLogout}>
-          Logout
-        </button>
-      </header>
+		const progression = Math.min(100, Math.max(0, (elapsedDays / totalDays) * 100));
+		return Math.round(progression);
+	};
 
-      {/* Main Content */}
-      <main className="dashboard-main">
-        {!budget ? (
-          // No budget created yet
-          <div className="no-budget-section">
-            <div className="no-budget-card">
-              <div className="no-budget-icon">📋</div>
-              <h2>No Budget Plan Yet</h2>
-              <p>Create your first budget plan to get started tracking your spending and reach your financial goals.</p>
-              <button className="btn-create-budget" onClick={handleCreateBudget}>
-                Create Your Budget Plan
-              </button>
-            </div>
-          </div>
-        ) : (
-          // Budget exists - show dashboard
-          <>
-            {/* Goal Progress Card */}
-            <section className="goal-section">
-              <div className="goal-card">
-                <h2>{budget.goalName}</h2>
-                <div className="goal-info">
-                  <div className="goal-stat">
-                    <span className="label">Target Amount</span>
-                    <span className="value">${parseFloat(budget.goalAmount).toFixed(2)}</span>
-                  </div>
-                  <div className="goal-stat">
-                    <span className="label">Timeline</span>
-                    <span className="value">{budget.goalTimeline || '?'} months</span>
-                  </div>
-                  <div className="goal-stat">
-                    <span className="label">Monthly Savings Needed</span>
-                    <span className="value">${(parseFloat(budget.goalAmount) / (parseFloat(budget.goalTimeline) || 12)).toFixed(2)}</span>
-                  </div>
-                </div>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: '0%' }}></div>
-                </div>
-                <p className="progress-text">$0 of ${parseFloat(budget.goalAmount).toFixed(2)}</p>
-              </div>
-            </section>
+	return (
+		<div className="dashboard-container">
+			{/* Header */}
+			<header className="dashboard-header">
+				<div className="header-left">
+					<button
+						className="logo logo-btn"
+						onClick={() => navigate("/dashboard")}
+					>
+						💰 Summit Funds
+					</button>
+					<div className="header-title">
+						<h1>Dashboard</h1>
+						<p>{user?.email}</p>
+					</div>
+				</div>
+				<div className="header-buttons">
+					<button className="btn-profile" onClick={() => navigate("/profile")}>
+						👤 Profile
+					</button>
+					<button className="btn-logout" onClick={handleLogout}>
+						Logout
+					</button>
+				</div>
+			</header>
 
-            {/* Budget Breakdown Cards */}
-            <section className="budget-section">
-              <h2>Your Monthly Budget Breakdown</h2>
-              <div className="budget-cards">
-                {/* Essentials Tier */}
-                <div className="budget-tier essentials-tier">
-                  <div className="tier-header">
-                    <div className="tier-icon">🏠</div>
-                    <div className="tier-title">
-                      <h3>Essentials</h3>
-                      <p>Non-negotiable expenses</p>
-                    </div>
-                  </div>
-                  <div className="tier-amount">${tiers.essentials.toFixed(2)}</div>
-                  <div className="tier-percentage">{((tiers.essentials / tiers.income) * 100).toFixed(0)}% of income</div>
-                  <div className="tier-details">
-                    <div className="detail-item">
-                      <span>Housing</span>
-                      <span>${(parseFloat(budget.housing) || 0).toFixed(2)}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span>Utilities</span>
-                      <span>${(parseFloat(budget.utilities) || 0).toFixed(2)}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span>Groceries</span>
-                      <span>${(parseFloat(budget.groceries) || 0).toFixed(2)}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span>Transportation</span>
-                      <span>${(parseFloat(budget.transportation) || 0).toFixed(2)}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span>Insurance</span>
-                      <span>${(parseFloat(budget.insurance) || 0).toFixed(2)}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span>Debt Payments</span>
-                      <span>${((parseFloat(budget.creditCardPayment) || 0) + (parseFloat(budget.studentLoan) || 0) + (parseFloat(budget.personalLoan) || 0)).toFixed(2)}</span>
-                    </div>
-                  </div>
-                </div>
+			{/* Main Content */}
+			<main className="dashboard-main">
+				<div className="dashboard-content">
+					{activeBudgetData?.metadata ? (
+						<div className="budget-status-container" onClick={() => navigate("/budget-detail", { state: { budgetData: activeBudgetData } })}>
+							<div className="budget-status-card">
+								<h2>{activeBudgetData.metadata.name}</h2>
+								<p className="budget-reason">{activeBudgetData.metadata.reason}</p>
+								<p className="budget-dates">
+									{new Date(activeBudgetData.metadata.startDate).toLocaleDateString()} — {new Date(activeBudgetData.metadata.endDate).toLocaleDateString()}
+								</p>
+								<div className="progression-section">
+									<div className="progression-label">Current Progress</div>
+									<div className="progression-bar">
+										<div 
+											className="progression-fill" 
+											style={{ width: `${calculateProgression(activeBudgetData.metadata)}%` }}
+										></div>
+									</div>
+									<div className="progression-text">{calculateProgression(activeBudgetData.metadata)}% Complete</div>
+								</div>
+								<p className="click-hint">Click for details →</p>
+							</div>
+						</div>
+					) : (
+						<div className="no-budget-container">
+							<div className="no-budget-card">
+								<div className="no-budget-icon">📋</div>
+								<h2>No Active Budget Plan</h2>
+								<p>You don't have an active budget plan yet. Create one to get started!</p>
+								<button 
+									className="create-plan-btn"
+									onClick={() => navigate("/budget-plans")}
+								>
+									Create Budget Plan
+								</button>
+							</div>
+						</div>
+					)}
+				</div>
+			</main>
 
-                {/* Discretionary Tier */}
-                <div className="budget-tier discretionary-tier">
-                  <div className="tier-header">
-                    <div className="tier-icon">🎉</div>
-                    <div className="tier-title">
-                      <h3>Discretionary</h3>
-                      <p>Fun & flexible spending</p>
-                    </div>
-                  </div>
-                  <div className="tier-amount">${tiers.discretionary.toFixed(2)}</div>
-                  <div className="tier-percentage">{((tiers.discretionary / tiers.income) * 100).toFixed(0)}% of income</div>
-                  <div className="tier-details">
-                    <div className="detail-item">
-                      <span>Dining Out</span>
-                      <span>${(parseFloat(budget.dining) || 0).toFixed(2)}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span>Entertainment</span>
-                      <span>${(parseFloat(budget.entertainment) || 0).toFixed(2)}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span>Subscriptions</span>
-                      <span>${(parseFloat(budget.subscriptions) || 0).toFixed(2)}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span>Shopping</span>
-                      <span>${(parseFloat(budget.shopping) || 0).toFixed(2)}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span>Gym/Fitness</span>
-                      <span>${(parseFloat(budget.gym) || 0).toFixed(2)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Emergency Fund Tier */}
-                <div className="budget-tier savings-tier">
-                  <div className="tier-header">
-                    <div className="tier-icon">🛡️</div>
-                    <div className="tier-title">
-                      <h3>Emergency Fund</h3>
-                      <p>Safety net for emergencies</p>
-                    </div>
-                  </div>
-                  <div className="tier-amount">${tiers.emergencyFund.toFixed(2)}</div>
-                  <div className="tier-percentage">{((tiers.emergencyFund / tiers.income) * 100).toFixed(0)}% of income</div>
-                </div>
-
-                {/* Goal Savings Tier */}
-                <div className="budget-tier goal-tier">
-                  <div className="tier-header">
-                    <div className="tier-icon">🎯</div>
-                    <div className="tier-title">
-                      <h3>Goal Savings</h3>
-                      <p>Towards your {budget.goalName}</p>
-                    </div>
-                  </div>
-                  <div className="tier-amount">${tiers.goalSavings.toFixed(2)}</div>
-                  <div className="tier-percentage">{((tiers.goalSavings / tiers.income) * 100).toFixed(0)}% of income</div>
-                </div>
-              </div>
-            </section>
-
-            {/* Summary Stats */}
-            <section className="summary-section">
-              <h2>Monthly Summary</h2>
-              <div className="summary-grid">
-                <div className="summary-item">
-                  <span className="summary-label">Total Income</span>
-                  <span className="summary-value">${tiers.income.toFixed(2)}</span>
-                </div>
-                <div className="summary-item">
-                  <span className="summary-label">Total Expenses</span>
-                  <span className="summary-value">${(tiers.essentials + tiers.discretionary).toFixed(2)}</span>
-                </div>
-                <div className="summary-item">
-                  <span className="summary-label">Total Savings</span>
-                  <span className="summary-value green">${(tiers.emergencyFund + tiers.goalSavings).toFixed(2)}</span>
-                </div>
-                <div className="summary-item">
-                  <span className="summary-label">Savings Rate</span>
-                  <span className="summary-value green">{((((tiers.emergencyFund + tiers.goalSavings) / tiers.income) * 100) || 0).toFixed(0)}%</span>
-                </div>
-              </div>
-            </section>
-
-            {/* Edit Budget Button */}
-            <div className="edit-budget-section">
-              <button className="btn-edit-budget" onClick={handleCreateBudget}>
-                Edit Budget Plan
-              </button>
-            </div>
-          </>
-        )}
-      </main>
-
-      {/* Footer */}
-      <footer className="dashboard-footer">
-        <p>&copy; 2025 Summit Funds. All rights reserved.</p>
-      </footer>
-    </div>
-  )
+			{/* Footer */}
+			<footer className="dashboard-footer">
+				<p>&copy; 2025 Summit Funds. All rights reserved.</p>
+			</footer>
+		</div>
+	);
 }

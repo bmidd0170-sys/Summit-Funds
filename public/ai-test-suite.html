@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Implementation Test Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .test-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .test-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .test-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .test-card p {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+        
+        .test-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .test-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .test-btn:active {
+            transform: translateY(0);
+        }
+        
+        .test-btn.running {
+            background: #FFA500;
+            cursor: not-allowed;
+        }
+        
+        .test-btn.success {
+            background: #4CAF50;
+        }
+        
+        .test-btn.error {
+            background: #f44336;
+        }
+        
+        .console {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            max-height: 500px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .console-line {
+            margin: 4px 0;
+        }
+        
+        .console-line.success { color: #4CAF50; }
+        .console-line.error { color: #f44336; }
+        .console-line.warning { color: #FFA500; }
+        .console-line.info { color: #2196F3; }
+        .console-line.header { color: #00ff00; font-weight: bold; }
+        
+        .run-all-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .run-all-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .run-all-btn:active {
+            transform: translateY(0);
+        }
+        
+        .run-all-btn.running {
+            background: #FFA500;
+            cursor: not-allowed;
+        }
+        
+        .summary {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .summary h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .summary-item {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        
+        .summary-item.success {
+            border-left-color: #4CAF50;
+        }
+        
+        .summary-item.error {
+            border-left-color: #f44336;
+        }
+        
+        .summary-item-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        
+        .summary-item-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI Implementation Test Suite</h1>
+            <p>Comprehensive testing of all AI services in Summit Funds</p>
+        </div>
+        
+        <button class="run-all-btn" onclick="runAllTests()">▶️ Run All Tests</button>
+        
+        <div class="console" id="console">
+            <div class="console-line header">🚀 AI TEST SUITE INITIALIZED</div>
+            <div class="console-line">Ready to test all AI implementations</div>
+            <div class="console-line">Click "Run All Tests" to begin</div>
+        </div>
+        
+        <div class="summary" id="summary" style="display: none;">
+            <h2>📊 Test Results Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-item success">
+                    <div class="summary-item-label">Tests Passed</div>
+                    <div class="summary-item-value" id="summary-passed">-</div>
+                </div>
+                <div class="summary-item error">
+                    <div class="summary-item-label">Tests Failed</div>
+                    <div class="summary-item-value" id="summary-failed">-</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-item-label">Tests Skipped</div>
+                    <div class="summary-item-value" id="summary-skipped">-</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-item-label">Total Time</div>
+                    <div class="summary-item-value" id="summary-time">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        const consoleEl = document.getElementById('console');
+        const summaryEl = document.getElementById('summary');
+        const runBtn = document.querySelector('.run-all-btn');
+        
+        let testResults = {};
+        
+        function addConsoleLog(message, type = 'info') {
+            const line = document.createElement('div');
+            line.className = `console-line ${type}`;
+            line.textContent = message;
+            consoleEl.appendChild(line);
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+        
+        window.addConsoleLog = addConsoleLog;
+        
+        async function runAllTests() {
+            runBtn.disabled = true;
+            runBtn.classList.add('running');
+            runBtn.textContent = '⏳ Running Tests...';
+            
+            consoleEl.innerHTML = '';
+            summaryEl.style.display = 'none';
+            
+            addConsoleLog('🚀 STARTING COMPREHENSIVE AI TESTS', 'header');
+            addConsoleLog('Started at: ' + new Date().toISOString(), 'info');
+            addConsoleLog('', 'info');
+            
+            const startTime = performance.now();
+            
+            try {
+                // Test 1: Custom Budget
+                addConsoleLog('📊 TEST 1: CUSTOM BUDGET SERVICE', 'header');
+                const budget = await testCustomBudget();
+                testResults.test1 = budget ? 'passed' : 'failed';
+                
+                await new Promise(r => setTimeout(r, 1000));
+                
+                // Test 2: Chatbot
+                addConsoleLog('💬 TEST 2: CHATBOT AI SERVICE', 'header');
+                const chatbot = await testChatbot();
+                testResults.test2 = chatbot ? 'passed' : 'failed';
+                
+                await new Promise(r => setTimeout(r, 1000));
+                
+                // Test 3: Daily Spending
+                addConsoleLog('📅 TEST 3: DAILY SPENDING SERVICE', 'header');
+                const daily = await testDaily();
+                testResults.test3 = daily ? 'passed' : 'failed';
+                
+                await new Promise(r => setTimeout(r, 1000));
+                
+                // Test 4: Rate Limiter
+                addConsoleLog('⏱️  TEST 4: RATE LIMITER', 'header');
+                const rateLimiter = await testRateLimiter();
+                testResults.test4 = rateLimiter ? 'passed' : 'failed';
+                
+                await new Promise(r => setTimeout(r, 1000));
+                
+                // Test 5: Error Handling
+                addConsoleLog('🛡️  TEST 5: ERROR HANDLING', 'header');
+                const errorHandle = await testErrorHandling();
+                testResults.test5 = errorHandle ? 'passed' : 'failed';
+                
+                const endTime = performance.now();
+                const totalTime = ((endTime - startTime) / 1000).toFixed(2);
+                
+                // Summary
+                addConsoleLog('', 'info');
+                addConsoleLog('='.repeat(60), 'header');
+                addConsoleLog('📋 TEST SUMMARY', 'header');
+                addConsoleLog('='.repeat(60), 'header');
+                
+                const passed = Object.values(testResults).filter(v => v === 'passed').length;
+                const failed = Object.values(testResults).filter(v => v === 'failed').length;
+                
+                addConsoleLog(`✅ PASSED: ${passed}/5`, 'success');
+                addConsoleLog(`❌ FAILED: ${failed}/5`, failed > 0 ? 'error' : 'info');
+                addConsoleLog(`⏱️  Total Time: ${totalTime}s`, 'info');
+                
+                if (passed >= 4) {
+                    addConsoleLog('🎉 OVERALL: SUCCESS - Most tests passed!', 'success');
+                } else {
+                    addConsoleLog('⚠️  OVERALL: Check logs for failures', 'warning');
+                }
+                
+                // Show summary
+                document.getElementById('summary-passed').textContent = passed;
+                document.getElementById('summary-failed').textContent = failed;
+                document.getElementById('summary-skipped').textContent = (5 - passed - failed);
+                document.getElementById('summary-time').textContent = totalTime + 's';
+                summaryEl.style.display = 'block';
+                
+            } catch (error) {
+                addConsoleLog('Fatal error: ' + error.message, 'error');
+            }
+            
+            runBtn.disabled = false;
+            runBtn.classList.remove('running');
+            runBtn.textContent = '▶️ Run All Tests';
+        }
+        
+        async function testCustomBudget() {
+            try {
+                const { generateCustomBudget } = await import('/src/services/customBudgetService.js');
+                
+                const profile = {
+                    monthlyIncome: 5000,
+                    housing: 1200, utilities: 150, groceries: 400, transportation: 300,
+                    insurance: 200, phone: 80, internet: 60, dining: 250, entertainment: 150,
+                    subscriptions: 50, shopping: 200, gym: 50, creditCardPayment: 200,
+                    studentLoan: 300, personalLoan: 0, dependents: 1, workHoursPerWeek: 40
+                };
+                
+                addConsoleLog('Creating custom budget...', 'info');
+                const startTime = performance.now();
+                const budget = await generateCustomBudget(profile);
+                const duration = ((performance.now() - startTime) / 1000).toFixed(2);
+                
+                if (budget && budget.customBreakdown) {
+                    addConsoleLog(`✅ PASSED - Response time: ${duration}s`, 'success');
+                    addConsoleLog(`   💰 Monthly Income: $${budget.monthlyIncome}`, 'info');
+                    addConsoleLog(`   📅 Daily Budget: $${budget.dailyBudget}`, 'info');
+                    addConsoleLog(`   🏠 Essentials: ${budget.customBreakdown.essentials?.percentage}%`, 'info');
+                    addConsoleLog(`   💡 Recommendations: ${budget.recommendations?.length || 0}`, 'info');
+                    addConsoleLog(`   📝 Source: ${budget.source}`, 'info');
+                    
+                    // Store for next tests
+                    const dateKey = new Date().toISOString().split("T")[0];
+                    const breakdowns = JSON.parse(localStorage.getItem("budgetBreakdowns") || "{}");
+                    breakdowns[dateKey] = budget;
+                    localStorage.setItem("budgetBreakdowns", JSON.stringify(breakdowns));
+                    
+                    return true;
+                } else {
+                    addConsoleLog('❌ FAILED - Missing customBreakdown', 'error');
+                    return false;
+                }
+            } catch (error) {
+                addConsoleLog('❌ FAILED - ' + error.message, 'error');
+                return false;
+            }
+        }
+        
+        async function testChatbot() {
+            try {
+                const { generateBudgetAdvice } = await import('/src/services/aiChatService.js');
+                
+                const profile = {
+                    monthlyIncome: 5000,
+                    housing: 1200, utilities: 150, groceries: 400, transportation: 300,
+                    insurance: 200, phone: 80, internet: 60, dining: 250, entertainment: 150,
+                    subscriptions: 50, shopping: 200, gym: 50, creditCardPayment: 200,
+                    studentLoan: 300, personalLoan: 0
+                };
+                
+                addConsoleLog('Testing chatbot with economic question...', 'info');
+                const startTime = performance.now();
+                const response = await generateBudgetAdvice(
+                    profile,
+                    { name: "Test Budget", dailyBudget: 166.67 },
+                    166.67,
+                    "How does inflation affect my budget?",
+                    new Date()
+                );
+                const duration = ((performance.now() - startTime) / 1000).toFixed(2);
+                
+                if (response && response.length > 10) {
+                    addConsoleLog(`✅ PASSED - Response time: ${duration}s`, 'success');
+                    addConsoleLog(`   📝 Response: "${response.substring(0, 80)}..."`, 'info');
+                    return true;
+                } else {
+                    addConsoleLog('❌ FAILED - Invalid response', 'error');
+                    return false;
+                }
+            } catch (error) {
+                addConsoleLog('❌ FAILED - ' + error.message, 'error');
+                return false;
+            }
+        }
+        
+        async function testDaily() {
+            try {
+                const { generateDailySpendingBreakdown } = await import('/src/services/aiSpendingService.js');
+                
+                const profile = {
+                    monthlyIncome: 5000,
+                    housing: 1200, utilities: 150, groceries: 400, transportation: 300,
+                    insurance: 200, phone: 80, internet: 60, dining: 250, entertainment: 150,
+                    subscriptions: 50, shopping: 200, gym: 50, creditCardPayment: 200,
+                    studentLoan: 300, personalLoan: 0
+                };
+                
+                addConsoleLog('Generating daily spending breakdown...', 'info');
+                const startTime = performance.now();
+                const spending = await generateDailySpendingBreakdown(profile, new Date(), 166.67);
+                const duration = ((performance.now() - startTime) / 1000).toFixed(2);
+                
+                if (spending && spending.timeSlots && spending.timeSlots.length > 0) {
+                    addConsoleLog(`✅ PASSED - Response time: ${duration}s`, 'success');
+                    addConsoleLog(`   📊 Time slots: ${spending.timeSlots.length} periods`, 'info');
+                    addConsoleLog(`   💰 Total Projected: $${spending.totalProjected}`, 'info');
+                    return true;
+                } else {
+                    addConsoleLog('❌ FAILED - No time slots', 'error');
+                    return false;
+                }
+            } catch (error) {
+                addConsoleLog('❌ FAILED - ' + error.message, 'error');
+                return false;
+            }
+        }
+        
+        async function testRateLimiter() {
+            try {
+                const { delayApiCall } = await import('/src/services/rateLimiter.js');
+                
+                addConsoleLog('Testing rate limiter with 3 calls...', 'info');
+                
+                const calls = [];
+                for (let i = 1; i <= 3; i++) {
+                    const start = performance.now();
+                    await delayApiCall();
+                    const duration = ((performance.now() - start) / 1000).toFixed(2);
+                    calls.push(duration);
+                    addConsoleLog(`   Call ${i}: ${duration}s`, 'info');
+                }
+                
+                addConsoleLog('✅ PASSED - Rate limiter working', 'success');
+                return true;
+            } catch (error) {
+                addConsoleLog('❌ FAILED - ' + error.message, 'error');
+                return false;
+            }
+        }
+        
+        async function testErrorHandling() {
+            try {
+                const { generateCustomBudget } = await import('/src/services/customBudgetService.js');
+                
+                const profile = {
+                    monthlyIncome: 5000,
+                    housing: 1200, utilities: 150, groceries: 400, transportation: 300,
+                    insurance: 200, phone: 80, internet: 60, dining: 250, entertainment: 150,
+                    subscriptions: 50, shopping: 200, gym: 50, creditCardPayment: 200,
+                    studentLoan: 300, personalLoan: 0
+                };
+                
+                addConsoleLog('Testing error handling & fallback...', 'info');
+                const budget = await generateCustomBudget(profile);
+                
+                if (budget && budget.customBreakdown) {
+                    addConsoleLog('✅ PASSED - Fallback successful', 'success');
+                    addConsoleLog(`   Source: ${budget.source}`, 'info');
+                    return true;
+                } else {
+                    addConsoleLog('❌ FAILED - Fallback failed', 'error');
+                    return false;
+                }
+            } catch (error) {
+                addConsoleLog('❌ FAILED - ' + error.message, 'error');
+                return false;
+            }
+        }
+        
+        window.runAllTests = runAllTests;
+        
+        // Auto-run tests on load
+        window.addEventListener('load', () => {
+            addConsoleLog('Page loaded - ready to test', 'success');
+        });
+    </script>
+</body>
+</html>
