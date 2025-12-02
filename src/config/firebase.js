@@ -17,6 +17,16 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID || 'your-app-id',
 }
 
+// Validate Firebase configuration
+const isValidConfig = firebaseConfig.apiKey && 
+                     firebaseConfig.apiKey !== 'YOUR_API_KEY' &&
+                     firebaseConfig.projectId && 
+                     firebaseConfig.projectId !== 'your-project-id'
+
+if (!isValidConfig) {
+  console.warn('⚠️ Firebase configuration is not properly set up. Please check your .env file.')
+}
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
 

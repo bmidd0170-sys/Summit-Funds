@@ -21,19 +21,33 @@ export function AuthProvider({ children }) {
 
 	// Check if user is developer on auth state change
 	useEffect(() => {
-		const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-			setUser(currentUser);
-			// Check if developer email
-			if (currentUser?.email === "Braydenmiddlebrooks@gmail.com") {
-				setIsDeveloper(true);
-				console.log("🔧 Developer mode enabled for", currentUser.email);
-			} else {
-				setIsDeveloper(false);
-			}
-			setLoading(false);
-		});
+		try {
+			const unsubscribe = auth.onAuthStateChanged(
+				(currentUser) => {
+					setUser(currentUser);
+					// Check if developer email
+					if (currentUser?.email === "Braydenmiddlebrooks@gmail.com") {
+						setIsDeveloper(true);
+						console.log("🔧 Developer mode enabled for", currentUser.email);
+					} else {
+						setIsDeveloper(false);
+					}
+					setLoading(false);
+					setError(null); // Clear any previous connection errors
+				},
+				(error) => {
+					console.error("🔥 Firebase Auth Error:", error);
+					setError("Firebase connection failed. Please check your configuration.");
+					setLoading(false);
+				}
+			);
 
-		return unsubscribe;
+			return unsubscribe;
+		} catch (error) {
+			console.error("🔥 Firebase initialization error:", error);
+			setError("Firebase is not properly configured. Please check your .env file.");
+			setLoading(false);
+		}
 	}, []);
 
 	// Sign up with email and password
