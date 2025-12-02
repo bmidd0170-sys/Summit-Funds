@@ -54,7 +54,7 @@ export default function FloatingChatbot() {
 	}
 
 	return (
-		<div className="floating-chatbot-wrapper">
+		<div className="floating-chatbot">
 			<BudgetChatbot
 				userProfile={userProfile}
 				budgetPlan={budgetPlan}
