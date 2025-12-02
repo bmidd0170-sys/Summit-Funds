@@ -4756,4 +4756,24 @@ input:focus, textarea:focus, select:focus {
   letter-spacing: 0.5px;
 }
 
+/* Demo Notice Styling */
+.demo-notice {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--info-bg);
+  border: 1px solid var(--info);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.demo-notice p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--info);
+}
+
+.demo-notice strong {
+  font-weight: 600;
+}
+
 /* ===== END PROFESSIONAL CSS CONSOLIDATION ===== */

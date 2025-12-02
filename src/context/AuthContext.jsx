@@ -146,18 +146,47 @@ export function AuthProvider({ children }) {
 		}
 	};
 
-	// Log in with Google
-	const loginWithGoogle = async () => {
+	// Mock Google login - accepts any email input
+	const loginWithGoogle = async (mockEmail = null) => {
 		setError(null);
 		try {
-			const provider = new GoogleAuthProvider();
-			const userCredential = await signInWithPopup(auth, provider);
-			setUser(userCredential.user);
-			return userCredential.user;
+			// If no email provided, prompt for one
+			let email = mockEmail;
+			if (!email) {
+				email = prompt("Enter your email for mock Google login:");
+				if (!email) {
+					throw new Error("Email is required for login");
+				}
+			}
+
+			// Create mock user object
+			const mockUser = {
+				uid: `google-${Date.now()}`,
+				email: email,
+				displayName: email.split('@')[0],
+				photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(email.split('@')[0])}&background=2D6CDF&color=fff`,
+				emailVerified: true,
+				providerData: [{
+					providerId: 'google.com',
+					email: email
+				}],
+				metadata: {
+					creationTime: new Date().toISOString(),
+					lastSignInTime: new Date().toISOString()
+				}
+			};
+
+			// Simulate loading delay
+			await new Promise(resolve => setTimeout(resolve, 1000));
+
+			setUser(mockUser);
+			console.log("✅ Mock Google login successful:", email);
+			return mockUser;
 		} catch (err) {
-			const errorMessage = getAuthErrorMessage(err.code);
+			console.error("❌ Mock Google login error:", err);
+			const errorMessage = err.message || "Google sign-in failed";
 			setError(errorMessage);
-			throw err;
+			throw new Error(errorMessage);
 		}
 	};
 
