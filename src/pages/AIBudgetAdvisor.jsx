@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { generateDailySpendingBreakdown } from "../services/aiSpendingService";
 import { generateCustomBudget } from "../services/customBudgetService";
 import BudgetChatbot from "../components/BudgetChatbot";
-import "../styles/AIBudgetAdvisor.css";
+import "../App.css";
 
 export default function AIBudgetAdvisor() {
 	const navigate = useNavigate();
@@ -64,7 +64,7 @@ export default function AIBudgetAdvisor() {
 
 		try {
 			const customBudget = await generateCustomBudget(profile);
-			
+
 			// Calculate actual spending categories
 			const essentialsActual =
 				(parseFloat(profile.housing) || 0) +
@@ -193,7 +193,12 @@ export default function AIBudgetAdvisor() {
 	};
 
 	const formatDate = (date) => {
-		const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+		const options = {
+			weekday: "long",
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		};
 		return new Date(date).toLocaleDateString("en-US", options);
 	};
 
@@ -334,8 +339,8 @@ export default function AIBudgetAdvisor() {
 							<div className="no-data-icon">📊</div>
 							<h2>No Financial Data</h2>
 							<p>
-								Complete your financial profile to get personalized AI
-								budget insights.
+								Complete your financial profile to get personalized AI budget
+								insights.
 							</p>
 							<button
 								className="btn-go-profile"
@@ -349,268 +354,294 @@ export default function AIBudgetAdvisor() {
 					<>
 						{view === "monthly" && (
 							<>
-						{/* AI Budget Chatbot */}
-						<BudgetChatbot 
-							userProfile={userProfile}
-							dailyBudget={budgetBreakdown.dailyBudget}
-							selectedDate={selectedDate}
-						/>
+								{/* AI Budget Chatbot */}
+								<BudgetChatbot
+									userProfile={userProfile}
+									dailyBudget={budgetBreakdown.dailyBudget}
+									selectedDate={selectedDate}
+								/>
 
-						{/* Budget Breakdown Comparison */}
-						<section className="breakdown-comparison-section">
-							<div className="comparison-container">
-								{/* Recommended vs Actual */}
-								<div className="comparison-card">
-									<h3>💡 Recommended vs Actual Spending</h3>
+								{/* Budget Breakdown Comparison */}
+								<section className="breakdown-comparison-section">
+									<div className="comparison-container">
+										{/* Recommended vs Actual */}
+										<div className="comparison-card">
+											<h3>💡 Recommended vs Actual Spending</h3>
 
-									<div className="category-comparison">
-										<div className="category-item">
-											<span className="category-name">
-												🏠 Essentials
-											</span>
-											<div className="comparison-bars">
-												<div className="bar-group">
-												<div
-													className="bar recommended"
-													style={{
-														width: `${Math.min(
-															((budgetBreakdown.recommended.essentials?.amount ||
-																budgetBreakdown.recommended.essentials) /
-																budgetBreakdown.monthlyIncome) *
-																100,
-															100
-														)}%`,
-													}}
-												></div>
-												<span className="bar-label">
-													${((budgetBreakdown.recommended.essentials?.amount) || (typeof budgetBreakdown.recommended.essentials === 'number' ? budgetBreakdown.recommended.essentials : 0)).toFixed(2)}/mo (Recommended)
-												</span>
+											<div className="category-comparison">
+												<div className="category-item">
+													<span className="category-name">🏠 Essentials</span>
+													<div className="comparison-bars">
+														<div className="bar-group">
+															<div
+																className="bar recommended"
+																style={{
+																	width: `${Math.min(
+																		((budgetBreakdown.recommended.essentials
+																			?.amount ||
+																			budgetBreakdown.recommended.essentials) /
+																			budgetBreakdown.monthlyIncome) *
+																			100,
+																		100
+																	)}%`,
+																}}
+															></div>
+															<span className="bar-label">
+																$
+																{(
+																	budgetBreakdown.recommended.essentials
+																		?.amount ||
+																	(typeof budgetBreakdown.recommended
+																		.essentials === "number"
+																		? budgetBreakdown.recommended.essentials
+																		: 0)
+																).toFixed(2)}
+																/mo (Recommended)
+															</span>
+														</div>
+														<div className="bar-group">
+															<div
+																className="bar actual"
+																style={{
+																	width: `${Math.min(
+																		(budgetBreakdown.actual.discretionary /
+																			budgetBreakdown.monthlyIncome) *
+																			100,
+																		100
+																	)}%`,
+																}}
+															></div>
+															<span className="bar-label">
+																$
+																{Number(
+																	budgetBreakdown.actual.discretionary
+																).toFixed(2)}
+																/mo (Actual)
+															</span>
+														</div>
+													</div>
 												</div>
-												<div className="bar-group">
-												<div
-													className="bar actual"
-													style={{
-														width: `${Math.min(
-															(budgetBreakdown.actual
-																.discretionary /
-																budgetBreakdown.monthlyIncome) *
-																100,
-															100
-														)}%`,
-													}}
-												></div>
-												<span className="bar-label">
-													${Number(budgetBreakdown.actual.discretionary).toFixed(2)}/mo (Actual)
-												</span>
-												</div>
-											</div>
-										</div>
 
-										<div className="category-item">
-											<span className="category-name">
-												🎉 Discretionary
-											</span>
-											<div className="comparison-bars">
-												<div className="bar-group">
-													<div
-													className="bar recommended"
-													style={{
-														width: `${Math.min(
-															((budgetBreakdown.recommended.discretionary?.amount ||
-																budgetBreakdown.recommended.discretionary) /
-																budgetBreakdown.monthlyIncome) *
-																100,
-															100
-														)}%`,
-													}}
-												></div>
-												<span className="bar-label">
-													${((budgetBreakdown.recommended.discretionary?.amount) || (typeof budgetBreakdown.recommended.discretionary === 'number' ? budgetBreakdown.recommended.discretionary : 0)).toFixed(2)}/mo (Recommended)
-												</span>
-												</div>
-												<div className="bar-group">
-													<div
-														className="bar actual"
-														style={{
-															width: `${Math.min(
-																(budgetBreakdown.actual
-																	.discretionary /
-																	budgetBreakdown.monthlyIncome) *
-																	100,
-																100
-															)}%`,
-														}}
-													></div>
-													<span className="bar-label">
-														${budgetBreakdown.actual.discretionary.toFixed(2)}/mo (Actual)
+												<div className="category-item">
+													<span className="category-name">
+														🎉 Discretionary
 													</span>
+													<div className="comparison-bars">
+														<div className="bar-group">
+															<div
+																className="bar recommended"
+																style={{
+																	width: `${Math.min(
+																		((budgetBreakdown.recommended.discretionary
+																			?.amount ||
+																			budgetBreakdown.recommended
+																				.discretionary) /
+																			budgetBreakdown.monthlyIncome) *
+																			100,
+																		100
+																	)}%`,
+																}}
+															></div>
+															<span className="bar-label">
+																$
+																{(
+																	budgetBreakdown.recommended.discretionary
+																		?.amount ||
+																	(typeof budgetBreakdown.recommended
+																		.discretionary === "number"
+																		? budgetBreakdown.recommended.discretionary
+																		: 0)
+																).toFixed(2)}
+																/mo (Recommended)
+															</span>
+														</div>
+														<div className="bar-group">
+															<div
+																className="bar actual"
+																style={{
+																	width: `${Math.min(
+																		(budgetBreakdown.actual.discretionary /
+																			budgetBreakdown.monthlyIncome) *
+																			100,
+																		100
+																	)}%`,
+																}}
+															></div>
+															<span className="bar-label">
+																$
+																{budgetBreakdown.actual.discretionary.toFixed(
+																	2
+																)}
+																/mo (Actual)
+															</span>
+														</div>
+													</div>
+												</div>
+
+												<div className="category-item">
+													<span className="category-name">
+														💰 Savings Target
+													</span>
+													<div className="comparison-bars">
+														<div className="bar-group">
+															<div
+																className="bar recommended"
+																style={{
+																	width: `${Math.min(
+																		((budgetBreakdown.recommended.savings
+																			?.amount ||
+																			budgetBreakdown.recommended.savings) /
+																			budgetBreakdown.monthlyIncome) *
+																			100,
+																		100
+																	)}%`,
+																}}
+															></div>
+															<span className="bar-label">
+																$
+																{(
+																	budgetBreakdown.recommended.savings?.amount ||
+																	(typeof budgetBreakdown.recommended
+																		.savings === "number"
+																		? budgetBreakdown.recommended.savings
+																		: 0)
+																).toFixed(2)}
+																/mo (Recommended)
+															</span>
+														</div>
+													</div>
 												</div>
 											</div>
 										</div>
 
-										<div className="category-item">
-											<span className="category-name">
-												💰 Savings Target
-											</span>
-											<div className="comparison-bars">
-											<div className="bar-group">
-												<div
-													className="bar recommended"
-													style={{
-														width: `${Math.min(
-															((budgetBreakdown.recommended.savings?.amount ||
-																budgetBreakdown.recommended.savings) /
-																budgetBreakdown.monthlyIncome) *
-																100,
-															100
-														)}%`,
-													}}
-												></div>
-												<span className="bar-label">
-													${((budgetBreakdown.recommended.savings?.amount) || (typeof budgetBreakdown.recommended.savings === 'number' ? budgetBreakdown.recommended.savings : 0)).toFixed(2)}/mo (Recommended)
-												</span>
+										{/* Budget History Stats */}
+										{budgetStats && (
+											<div className="stats-card">
+												<h3>📈 Your Budget Planning Stats</h3>
+												<div className="stats-grid">
+													<div className="stat-item">
+														<span className="stat-label">Days Planned</span>
+														<span className="stat-value">
+															{budgetStats.totalDays}
+														</span>
+													</div>
+													<div className="stat-item">
+														<span className="stat-label">Average Budget</span>
+														<span className="stat-value">
+															${budgetStats.averageBudget}
+														</span>
+													</div>
+													<div className="stat-item">
+														<span className="stat-label">Highest Limit</span>
+														<span className="stat-value">
+															${budgetStats.highestBudget}
+														</span>
+													</div>
+													<div className="stat-item">
+														<span className="stat-label">Lowest Limit</span>
+														<span className="stat-value">
+															${budgetStats.lowestBudget}
+														</span>
+													</div>
 												</div>
 											</div>
+										)}
+									</div>
+								</section>
+
+								{/* AI Recommendations */}
+								<section className="recommendations-section">
+									<div className="recommendations-card">
+										<h3>🎯 AI Budget Recommendations</h3>
+										<div className="recommendations-list">
+											{budgetBreakdown.actual.essentials >
+												budgetBreakdown.monthlyIncome * 0.5 && (
+												<div className="recommendation-item warning">
+													<span className="rec-icon">⚠️</span>
+													<div className="rec-content">
+														<span className="rec-title">
+															Essential Expenses High
+														</span>
+														<span className="rec-text">
+															Your essential expenses are above the recommended
+															50%. Consider reducing housing, utilities, or
+															transportation costs.
+														</span>
+													</div>
+												</div>
+											)}
+
+											{budgetBreakdown.actual.discretionary >
+												budgetBreakdown.monthlyIncome * 0.3 && (
+												<div className="recommendation-item warning">
+													<span className="rec-icon">💡</span>
+													<div className="rec-content">
+														<span className="rec-title">
+															Cut Discretionary Spending
+														</span>
+														<span className="rec-text">
+															Your discretionary spending exceeds 30%. Reduce
+															dining, entertainment, or subscriptions to save
+															more.
+														</span>
+													</div>
+												</div>
+											)}
+
+											{budgetBreakdown.remaining < 0 && (
+												<div className="recommendation-item error">
+													<span className="rec-icon">🚨</span>
+													<div className="rec-content">
+														<span className="rec-title">
+															Overspending Alert
+														</span>
+														<span className="rec-text">
+															You're spending more than your monthly income.
+															Review your expenses immediately and adjust your
+															budget.
+														</span>
+													</div>
+												</div>
+											)}
+
+											{budgetBreakdown.remaining >= 0 &&
+												budgetBreakdown.actual.essentials <=
+													budgetBreakdown.monthlyIncome * 0.5 &&
+												budgetBreakdown.actual.discretionary <=
+													budgetBreakdown.monthlyIncome * 0.3 && (
+													<div className="recommendation-item success">
+														<span className="rec-icon">✨</span>
+														<div className="rec-content">
+															<span className="rec-title">
+																Great Budget Balance!
+															</span>
+															<span className="rec-text">
+																You're on track with the 50/30/20 rule. Keep up
+																with your budgeting and continue saving
+																consistently.
+															</span>
+														</div>
+													</div>
+												)}
 										</div>
 									</div>
+								</section>
+
+								{/* Action Buttons */}
+								<div className="action-buttons">
+									<button
+										className="btn-back-calendar"
+										onClick={() => navigate("/dashboard")}
+									>
+										📅 Back to Calendar
+									</button>
+									<button
+										className="btn-edit-profile"
+										onClick={() => navigate("/financial-profile")}
+									>
+										✏️ Edit Financial Profile
+									</button>
 								</div>
-
-								{/* Budget History Stats */}
-								{budgetStats && (
-									<div className="stats-card">
-										<h3>📈 Your Budget Planning Stats</h3>
-										<div className="stats-grid">
-											<div className="stat-item">
-												<span className="stat-label">
-													Days Planned
-												</span>
-												<span className="stat-value">
-													{budgetStats.totalDays}
-												</span>
-											</div>
-											<div className="stat-item">
-												<span className="stat-label">
-													Average Budget
-												</span>
-												<span className="stat-value">
-													${budgetStats.averageBudget}
-												</span>
-											</div>
-											<div className="stat-item">
-												<span className="stat-label">
-													Highest Limit
-												</span>
-												<span className="stat-value">
-													${budgetStats.highestBudget}
-												</span>
-											</div>
-											<div className="stat-item">
-												<span className="stat-label">
-													Lowest Limit
-												</span>
-												<span className="stat-value">
-													${budgetStats.lowestBudget}
-												</span>
-											</div>
-										</div>
-									</div>
-								)}
-							</div>
-						</section>
-
-						{/* AI Recommendations */}
-						<section className="recommendations-section">
-							<div className="recommendations-card">
-								<h3>🎯 AI Budget Recommendations</h3>
-								<div className="recommendations-list">
-									{budgetBreakdown.actual.essentials >
-										budgetBreakdown.monthlyIncome * 0.5 && (
-										<div className="recommendation-item warning">
-											<span className="rec-icon">⚠️</span>
-											<div className="rec-content">
-												<span className="rec-title">
-													Essential Expenses High
-												</span>
-												<span className="rec-text">
-													Your essential expenses are above the
-													recommended 50%. Consider reducing housing,
-													utilities, or transportation costs.
-												</span>
-											</div>
-										</div>
-									)}
-
-									{budgetBreakdown.actual.discretionary >
-										budgetBreakdown.monthlyIncome * 0.3 && (
-										<div className="recommendation-item warning">
-											<span className="rec-icon">💡</span>
-											<div className="rec-content">
-												<span className="rec-title">
-													Cut Discretionary Spending
-												</span>
-												<span className="rec-text">
-													Your discretionary spending exceeds 30%.
-													Reduce dining, entertainment, or subscriptions
-													to save more.
-												</span>
-											</div>
-										</div>
-									)}
-
-									{budgetBreakdown.remaining < 0 && (
-										<div className="recommendation-item error">
-											<span className="rec-icon">🚨</span>
-											<div className="rec-content">
-												<span className="rec-title">
-													Overspending Alert
-												</span>
-												<span className="rec-text">
-													You're spending more than your monthly income.
-													Review your expenses immediately and adjust
-													your budget.
-												</span>
-											</div>
-										</div>
-									)}
-
-									{budgetBreakdown.remaining >= 0 &&
-										budgetBreakdown.actual.essentials <=
-											budgetBreakdown.monthlyIncome * 0.5 &&
-										budgetBreakdown.actual.discretionary <=
-											budgetBreakdown.monthlyIncome * 0.3 && (
-										<div className="recommendation-item success">
-											<span className="rec-icon">✨</span>
-											<div className="rec-content">
-												<span className="rec-title">
-													Great Budget Balance!
-												</span>
-												<span className="rec-text">
-													You're on track with the 50/30/20 rule. Keep
-													up with your budgeting and continue saving
-													consistently.
-												</span>
-											</div>
-										</div>
-									)}
-								</div>
-							</div>
-						</section>
-
-						{/* Action Buttons */}
-						<div className="action-buttons">
-							<button
-								className="btn-back-calendar"
-								onClick={() => navigate("/dashboard")}
-							>
-								📅 Back to Calendar
-							</button>
-							<button
-								className="btn-edit-profile"
-								onClick={() => navigate("/financial-profile")}
-							>
-								✏️ Edit Financial Profile
-							</button>
-						</div>
 							</>
 						)}
 
@@ -618,12 +649,23 @@ export default function AIBudgetAdvisor() {
 							<section className="daily-spending-section">
 								{/* Calendar Navigation */}
 								<div className="calendar-navigation">
-									<button className="nav-btn" onClick={handlePreviousDay}>← Previous Month</button>
+									<button className="nav-btn" onClick={handlePreviousDay}>
+										← Previous Month
+									</button>
 									<div className="month-display">
-										<h2>{selectedDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}</h2>
-										<button className="today-btn" onClick={handleTodayClick}>Today</button>
+										<h2>
+											{selectedDate.toLocaleDateString("en-US", {
+												month: "long",
+												year: "numeric",
+											})}
+										</h2>
+										<button className="today-btn" onClick={handleTodayClick}>
+											Today
+										</button>
 									</div>
-									<button className="nav-btn" onClick={handleNextDay}>Next Month →</button>
+									<button className="nav-btn" onClick={handleNextDay}>
+										Next Month →
+									</button>
 								</div>
 
 								{/* Calendar Grid */}
@@ -641,9 +683,9 @@ export default function AIBudgetAdvisor() {
 										{generateCalendarDays().map((day, index) => (
 											<div
 												key={index}
-												className={`calendar-day ${day.isCurrentMonth ? "" : "other-month"} ${
-													isToday(day.date) ? "today" : ""
-												} ${
+												className={`calendar-day ${
+													day.isCurrentMonth ? "" : "other-month"
+												} ${isToday(day.date) ? "today" : ""} ${
 													isSameDay(day.date, selectedDate) ? "selected" : ""
 												}`}
 												onClick={() => setSelectedDate(day.date)}
@@ -663,15 +705,23 @@ export default function AIBudgetAdvisor() {
 								{/* Selected Day Details */}
 								{loadingDaily ? (
 									<div className="loading-container">
-										<p>Loading spending plan for {formatDate(selectedDate)}...</p>
+										<p>
+											Loading spending plan for {formatDate(selectedDate)}...
+										</p>
 									</div>
 								) : dailySpending ? (
 									<>
 										{/* Day Card Header */}
 										<div className="day-card-header">
 											<div className="header-left">
-												<h3 className="selected-date">{formatDate(selectedDate)}</h3>
-												<p className="day-type">{dailySpending.dayType === "weekend" ? "🎉 Weekend" : "💼 Weekday"}</p>
+												<h3 className="selected-date">
+													{formatDate(selectedDate)}
+												</h3>
+												<p className="day-type">
+													{dailySpending.dayType === "weekend"
+														? "🎉 Weekend"
+														: "💼 Weekday"}
+												</p>
 											</div>
 											<div className="header-right">
 												<div className="daily-amount">
@@ -684,26 +734,44 @@ export default function AIBudgetAdvisor() {
 										{/* Economic Context Banner */}
 										<div className="economic-banner">
 											<span className="context-icon">🌍</span>
-											<p className="context-text">{dailySpending.economicContext}</p>
+											<p className="context-text">
+												{dailySpending.economicContext}
+											</p>
 										</div>
 
 										{/* Day Overview */}
 										<div className="daily-overview-card">
 											<h3>📋 Spending Plan</h3>
-											<p className="day-overview">{dailySpending.dayOverview}</p>
+											<p className="day-overview">
+												{dailySpending.dayOverview}
+											</p>
 
 											<div className="daily-summary-grid">
 												<div className="summary-item">
 													<span className="summary-label">Total Budget</span>
-													<span className="summary-value">${dailySpending.totalProjected.toFixed(2)}</span>
+													<span className="summary-value">
+														${dailySpending.totalProjected.toFixed(2)}
+													</span>
 												</div>
 												<div className="summary-item">
-													<span className="summary-label">Potential Savings</span>
-													<span className="summary-value positive">${dailySpending.savings.toFixed(2)}</span>
+													<span className="summary-label">
+														Potential Savings
+													</span>
+													<span className="summary-value positive">
+														${dailySpending.savings.toFixed(2)}
+													</span>
 												</div>
 												<div className="summary-item">
-													<span className="summary-label">Projected Spending</span>
-													<span className="summary-value">${(dailySpending.totalProjected - dailySpending.savings).toFixed(2)}</span>
+													<span className="summary-label">
+														Projected Spending
+													</span>
+													<span className="summary-value">
+														$
+														{(
+															dailySpending.totalProjected -
+															dailySpending.savings
+														).toFixed(2)}
+													</span>
 												</div>
 											</div>
 										</div>
@@ -715,8 +783,12 @@ export default function AIBudgetAdvisor() {
 												{dailySpending.timeSlots.map((slot, index) => (
 													<div key={index} className="period-card">
 														<div className="period-header">
-															<span className="period-title">{slot.period}</span>
-															<span className="period-time">{slot.timeRange}</span>
+															<span className="period-title">
+																{slot.period}
+															</span>
+															<span className="period-time">
+																{slot.timeRange}
+															</span>
 														</div>
 														<div className="period-amount">
 															${slot.suggestedAmount.toFixed(2)}
@@ -726,7 +798,9 @@ export default function AIBudgetAdvisor() {
 														</div>
 														<div className="period-tips">
 															{slot.tips.map((tip, tipIndex) => (
-																<div key={tipIndex} className="tip-badge">{tip}</div>
+																<div key={tipIndex} className="tip-badge">
+																	{tip}
+																</div>
 															))}
 														</div>
 													</div>
@@ -740,8 +814,15 @@ export default function AIBudgetAdvisor() {
 											<div className="breakdown-grid">
 												<div className="breakdown-item essentials">
 													<div className="breakdown-header">
-														<span className="breakdown-label">🏠 Essentials (50%)</span>
-														<span className="breakdown-amount">${dailySpending.essentialBreakdown.amount.toFixed(2)}</span>
+														<span className="breakdown-label">
+															🏠 Essentials (50%)
+														</span>
+														<span className="breakdown-amount">
+															$
+															{dailySpending.essentialBreakdown.amount.toFixed(
+																2
+															)}
+														</span>
 													</div>
 													<div className="breakdown-bar">
 														<div
@@ -749,13 +830,22 @@ export default function AIBudgetAdvisor() {
 															style={{ width: "50%" }}
 														></div>
 													</div>
-													<p className="breakdown-desc">Housing, food, transportation, insurance</p>
+													<p className="breakdown-desc">
+														Housing, food, transportation, insurance
+													</p>
 												</div>
 
 												<div className="breakdown-item discretionary">
 													<div className="breakdown-header">
-														<span className="breakdown-label">🎉 Discretionary (30%)</span>
-														<span className="breakdown-amount">${dailySpending.discretionaryBreakdown.amount.toFixed(2)}</span>
+														<span className="breakdown-label">
+															🎉 Discretionary (30%)
+														</span>
+														<span className="breakdown-amount">
+															$
+															{dailySpending.discretionaryBreakdown.amount.toFixed(
+																2
+															)}
+														</span>
 													</div>
 													<div className="breakdown-bar">
 														<div
@@ -763,13 +853,20 @@ export default function AIBudgetAdvisor() {
 															style={{ width: "30%" }}
 														></div>
 													</div>
-													<p className="breakdown-desc">Entertainment, dining, subscriptions, shopping</p>
+													<p className="breakdown-desc">
+														Entertainment, dining, subscriptions, shopping
+													</p>
 												</div>
 
 												<div className="breakdown-item savings">
 													<div className="breakdown-header">
-														<span className="breakdown-label">💰 Savings (20%)</span>
-														<span className="breakdown-amount">${dailySpending.savingsBreakdown.amount.toFixed(2)}</span>
+														<span className="breakdown-label">
+															💰 Savings (20%)
+														</span>
+														<span className="breakdown-amount">
+															$
+															{dailySpending.savingsBreakdown.amount.toFixed(2)}
+														</span>
 													</div>
 													<div className="breakdown-bar">
 														<div
@@ -777,7 +874,9 @@ export default function AIBudgetAdvisor() {
 															style={{ width: "20%" }}
 														></div>
 													</div>
-													<p className="breakdown-desc">Emergency fund, investments, financial security</p>
+													<p className="breakdown-desc">
+														Emergency fund, investments, financial security
+													</p>
 												</div>
 											</div>
 										</div>
@@ -789,9 +888,18 @@ export default function AIBudgetAdvisor() {
 												<div className="tip-card">
 													<h4>✨ Smart Spending</h4>
 													<ul>
-														<li>Plan meals in advance to avoid impulse food spending</li>
-														<li>Use cash for discretionary items to track spending better</li>
-														<li>Avoid shopping during peak hours when emotions are high</li>
+														<li>
+															Plan meals in advance to avoid impulse food
+															spending
+														</li>
+														<li>
+															Use cash for discretionary items to track spending
+															better
+														</li>
+														<li>
+															Avoid shopping during peak hours when emotions are
+															high
+														</li>
 														<li>Review transactions before bed</li>
 													</ul>
 												</div>

@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import "../styles/Settings.css";
+import "../App.css";
 
 export default function Settings() {
 	const navigate = useNavigate();
 	const { user, logout, updateEmail, updatePassword } = useAuth();
-	const [profileImage, setProfileImage] = useState(localStorage.getItem("profileImage") || null);
+	const [profileImage, setProfileImage] = useState(
+		localStorage.getItem("profileImage") || null
+	);
 	const [newEmail, setNewEmail] = useState(user?.email || "");
 	const [currentPassword, setCurrentPassword] = useState("");
 	const [newPassword, setNewPassword] = useState("");
@@ -94,7 +96,10 @@ export default function Settings() {
 			{/* Header */}
 			<header className="settings-header">
 				<div className="header-left">
-					<button className="logo logo-btn" onClick={() => navigate("/dashboard")}>
+					<button
+						className="logo logo-btn"
+						onClick={() => navigate("/dashboard")}
+					>
 						💰 Summit Funds
 					</button>
 					<div className="header-title">
@@ -123,7 +128,11 @@ export default function Settings() {
 						<h2>Profile Picture</h2>
 						<div className="profile-picture-area">
 							{profileImage ? (
-								<img src={profileImage} alt="Profile" className="profile-image" />
+								<img
+									src={profileImage}
+									alt="Profile"
+									className="profile-image"
+								/>
 							) : (
 								<div className="profile-image-placeholder">📷</div>
 							)}

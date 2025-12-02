@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { generateBudgetAdvice, generateGoalImprovementTips } from "../services/aiChatService";
-import "../styles/BudgetChatbot.css";
+import {
+	generateBudgetAdvice,
+	generateGoalImprovementTips,
+} from "../services/aiChatService";
+import "../App.css";
 
 export default function BudgetChatbot({
 	userProfile,
@@ -18,8 +21,12 @@ export default function BudgetChatbot({
 	useEffect(() => {
 		if (messages.length === 0) {
 			const hasGoal = budgetPlan?.goalType && budgetPlan?.goalType !== "skip";
-			const goalInfo = hasGoal ? `\n• 🎯 Tips to reach your ${budgetPlan.goalType === "total" ? "savings" : "monthly"} goal` : "";
-			
+			const goalInfo = hasGoal
+				? `\n• 🎯 Tips to reach your ${
+						budgetPlan.goalType === "total" ? "savings" : "monthly"
+				  } goal`
+				: "";
+
 			setMessages([
 				{
 					id: 1,
@@ -64,16 +71,23 @@ What would you like to know today?`,
 
 		try {
 			// Check if user is asking for goal tips
-			const isGoalQuestion = userQuestionText.toLowerCase().includes("🎯") || 
-									userQuestionText.toLowerCase().includes("goal") ||
-									userQuestionText.toLowerCase().includes("reach my");
-			
+			const isGoalQuestion =
+				userQuestionText.toLowerCase().includes("🎯") ||
+				userQuestionText.toLowerCase().includes("goal") ||
+				userQuestionText.toLowerCase().includes("reach my");
+
 			let response;
 			if (isGoalQuestion && hasGoal) {
 				// Get goal-specific improvement tips
 				const breakdowns = localStorage.getItem("budgetBreakdowns");
-				const breakdown = breakdowns ? JSON.parse(breakdowns)[Object.keys(JSON.parse(breakdowns))[0]] : null;
-				response = await generateGoalImprovementTips(userProfile, budgetPlan, breakdown);
+				const breakdown = breakdowns
+					? JSON.parse(breakdowns)[Object.keys(JSON.parse(breakdowns))[0]]
+					: null;
+				response = await generateGoalImprovementTips(
+					userProfile,
+					budgetPlan,
+					breakdown
+				);
 			} else {
 				// Get general budget advice
 				response = await generateBudgetAdvice(
@@ -139,8 +153,8 @@ What would you like to know today?`,
 
 	// Add goal-specific quick question if user has a goal
 	const hasGoal = budgetPlan?.goalType && budgetPlan?.goalType !== "skip";
-	const goalQuestion = hasGoal 
-		? budgetPlan?.goalType === "total" 
+	const goalQuestion = hasGoal
+		? budgetPlan?.goalType === "total"
 			? "🎯 Tips to reach my total savings goal?"
 			: "🎯 How can I reach my monthly savings goal?"
 		: null;
@@ -172,7 +186,6 @@ What would you like to know today?`,
 							✕
 						</button>
 					</div>
-
 					{/* Messages Area */}
 					<div className="chatbot-messages">
 						{messages.map((message) => (
@@ -188,13 +201,10 @@ What would you like to know today?`,
 								<div className="message-content">
 									<p>{message.text}</p>
 									<span className="message-time">
-										{message.timestamp.toLocaleTimeString(
-											"en-US",
-											{
-												hour: "2-digit",
-												minute: "2-digit",
-											}
-										)}
+										{message.timestamp.toLocaleTimeString("en-US", {
+											hour: "2-digit",
+											minute: "2-digit",
+										})}
 									</span>
 								</div>
 							</div>
@@ -215,36 +225,36 @@ What would you like to know today?`,
 
 						<div ref={messagesEndRef} />
 					</div>
-
-				{/* Quick Questions */}
-				{messages.length === 1 && (
-					<div className="quick-questions">
-						<div className="questions-grid">
-							{goalQuestion && (
-								<button
-									className="quick-question-btn goal-question"
-									onClick={() => {
-										setInputValue(goalQuestion);
-									}}
-									title="Get AI tips for reaching your goal"
-								>
-									{goalQuestion}
-								</button>
-							)}
-							{quickQuestions.map((question, index) => (
-								<button
-									key={index}
-									className="quick-question-btn"
-									onClick={() => {
-										setInputValue(question);
-									}}
-								>
-									{question}
-								</button>
-							))}
+					{/* Quick Questions */}
+					{messages.length === 1 && (
+						<div className="quick-questions">
+							<div className="questions-grid">
+								{goalQuestion && (
+									<button
+										className="quick-question-btn goal-question"
+										onClick={() => {
+											setInputValue(goalQuestion);
+										}}
+										title="Get AI tips for reaching your goal"
+									>
+										{goalQuestion}
+									</button>
+								)}
+								{quickQuestions.map((question, index) => (
+									<button
+										key={index}
+										className="quick-question-btn"
+										onClick={() => {
+											setInputValue(question);
+										}}
+									>
+										{question}
+									</button>
+								))}
+							</div>
 						</div>
-					</div>
-				)}					{/* Input Area */}
+					)}{" "}
+					{/* Input Area */}
 					<form className="chatbot-input-form" onSubmit={handleSendMessage}>
 						<input
 							type="text"
@@ -262,13 +272,9 @@ What would you like to know today?`,
 							{loading ? "..." : "Send"}
 						</button>
 					</form>
-
 					{/* Footer */}
 					<div className="chatbot-footer">
-						<button
-							className="clear-chat-btn"
-							onClick={handleClearChat}
-						>
+						<button className="clear-chat-btn" onClick={handleClearChat}>
 							Clear chat
 						</button>
 					</div>

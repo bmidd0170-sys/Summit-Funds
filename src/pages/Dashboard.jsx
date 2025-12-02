@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
 import BudgetDisplay from "../components/BudgetDisplay";
-import "../styles/Dashboard.css";
+import "../App.css";
 
 export default function Dashboard() {
 	const navigate = useNavigate();
@@ -18,11 +18,11 @@ export default function Dashboard() {
 		if (metadata) {
 			const parsedMetadata = JSON.parse(metadata);
 			const sortedKeys = Object.keys(parsedMetadata).sort().reverse();
-			
+
 			if (sortedKeys.length > 0) {
 				const latestKey = sortedKeys[0];
 				const latestMetadata = parsedMetadata[latestKey];
-				
+
 				if (latestMetadata.status === "active") {
 					setActiveBudgetKey(latestKey);
 					setActiveBudgetData({ metadata: latestMetadata });
@@ -43,9 +43,9 @@ export default function Dashboard() {
 			if (breakdowns) {
 				const parsedBreakdowns = JSON.parse(breakdowns);
 				if (parsedBreakdowns[activeBudgetKey]) {
-					setActiveBudgetData(prev => ({
+					setActiveBudgetData((prev) => ({
 						...prev,
-						breakdown: parsedBreakdowns[activeBudgetKey]
+						breakdown: parsedBreakdowns[activeBudgetKey],
 					}));
 
 					// Update metadata to mark as not generating
@@ -53,10 +53,13 @@ export default function Dashboard() {
 					if (metadata) {
 						const parsedMetadata = JSON.parse(metadata);
 						parsedMetadata[activeBudgetKey].generating = false;
-						localStorage.setItem("budgetMetadata", JSON.stringify(parsedMetadata));
-						setActiveBudgetData(prev => ({
+						localStorage.setItem(
+							"budgetMetadata",
+							JSON.stringify(parsedMetadata)
+						);
+						setActiveBudgetData((prev) => ({
 							...prev,
-							metadata: parsedMetadata[activeBudgetKey]
+							metadata: parsedMetadata[activeBudgetKey],
 						}));
 					}
 
@@ -91,10 +94,15 @@ export default function Dashboard() {
 		const endDate = new Date(metadata.endDate);
 		const now = new Date();
 
-		const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
-		const elapsedDays = Math.ceil((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
+		const totalDays =
+			Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+		const elapsedDays =
+			Math.ceil((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
 
-		const progression = Math.min(100, Math.max(0, (elapsedDays / totalDays) * 100));
+		const progression = Math.min(
+			100,
+			Math.max(0, (elapsedDays / totalDays) * 100)
+		);
 		return Math.round(progression);
 	};
 
@@ -128,22 +136,43 @@ export default function Dashboard() {
 			<main className="dashboard-main">
 				<div className="dashboard-content">
 					{activeBudgetData?.metadata ? (
-						<div className="budget-status-container" onClick={() => navigate("/budget-detail", { state: { budgetData: activeBudgetData } })}>
+						<div
+							className="budget-status-container"
+							onClick={() =>
+								navigate("/budget-detail", {
+									state: { budgetData: activeBudgetData },
+								})
+							}
+						>
 							<div className="budget-status-card">
 								<h2>{activeBudgetData.metadata.name}</h2>
-								<p className="budget-reason">{activeBudgetData.metadata.reason}</p>
+								<p className="budget-reason">
+									{activeBudgetData.metadata.reason}
+								</p>
 								<p className="budget-dates">
-									{new Date(activeBudgetData.metadata.startDate).toLocaleDateString()} — {new Date(activeBudgetData.metadata.endDate).toLocaleDateString()}
+									{new Date(
+										activeBudgetData.metadata.startDate
+									).toLocaleDateString()}{" "}
+									—{" "}
+									{new Date(
+										activeBudgetData.metadata.endDate
+									).toLocaleDateString()}
 								</p>
 								<div className="progression-section">
 									<div className="progression-label">Current Progress</div>
 									<div className="progression-bar">
-										<div 
-											className="progression-fill" 
-											style={{ width: `${calculateProgression(activeBudgetData.metadata)}%` }}
+										<div
+											className="progression-fill"
+											style={{
+												width: `${calculateProgression(
+													activeBudgetData.metadata
+												)}%`,
+											}}
 										></div>
 									</div>
-									<div className="progression-text">{calculateProgression(activeBudgetData.metadata)}% Complete</div>
+									<div className="progression-text">
+										{calculateProgression(activeBudgetData.metadata)}% Complete
+									</div>
 								</div>
 								<p className="click-hint">Click for details →</p>
 							</div>
@@ -153,8 +182,11 @@ export default function Dashboard() {
 							<div className="no-budget-card">
 								<div className="no-budget-icon">📋</div>
 								<h2>No Active Budget Plan</h2>
-								<p>You don't have an active budget plan yet. Create one to get started!</p>
-								<button 
+								<p>
+									You don't have an active budget plan yet. Create one to get
+									started!
+								</p>
+								<button
 									className="create-plan-btn"
 									onClick={() => navigate("/budget-plans")}
 								>

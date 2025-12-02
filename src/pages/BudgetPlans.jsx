@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import "../styles/BudgetPlans.css";
+import "../App.css";
 
 export default function BudgetPlans() {
 	const navigate = useNavigate();
@@ -100,12 +100,16 @@ export default function BudgetPlans() {
 
 	// Edit budget
 	const handleEditBudget = (date) => {
-		navigate("/dashboard", { state: { selectedDate: new Date(date + "T00:00:00") } });
+		navigate("/dashboard", {
+			state: { selectedDate: new Date(date + "T00:00:00") },
+		});
 	};
 
 	// Get all unique months
 	const getAvailableMonths = () => {
-		const months = [...new Set(getBudgetEntries().map((e) => getMonth(e.date)))];
+		const months = [
+			...new Set(getBudgetEntries().map((e) => getMonth(e.date))),
+		];
 		return months.sort().reverse();
 	};
 
@@ -183,7 +187,9 @@ export default function BudgetPlans() {
 							<div className="stat-icon">🎯</div>
 							<div className="stat-info">
 								<span className="stat-label">Budget Range</span>
-								<span className="stat-value">${stats.lowest} - ${stats.highest}</span>
+								<span className="stat-value">
+									${stats.lowest} - ${stats.highest}
+								</span>
 							</div>
 						</div>
 					</div>
@@ -254,9 +260,12 @@ export default function BudgetPlans() {
 									<div className="date-info">
 										<h3>{formatDate(budget.date)}</h3>
 										<span className="day-type">
-											{new Date(budget.date + "T00:00:00").toLocaleDateString("en-US", {
-												weekday: "short",
-											})}
+											{new Date(budget.date + "T00:00:00").toLocaleDateString(
+												"en-US",
+												{
+													weekday: "short",
+												}
+											)}
 										</span>
 									</div>
 									<div className="card-actions">
@@ -288,20 +297,26 @@ export default function BudgetPlans() {
 											{budget.metadata.name && (
 												<div className="metadata-item">
 													<span className="meta-label">Plan Name:</span>
-													<span className="meta-value">{budget.metadata.name}</span>
+													<span className="meta-value">
+														{budget.metadata.name}
+													</span>
 												</div>
 											)}
 											{budget.metadata.reason && (
 												<div className="metadata-item">
 													<span className="meta-label">Reason:</span>
-													<span className="meta-value">{budget.metadata.reason}</span>
+													<span className="meta-value">
+														{budget.metadata.reason}
+													</span>
 												</div>
 											)}
 											{budget.metadata.createdAt && (
 												<div className="metadata-item">
 													<span className="meta-label">Created:</span>
 													<span className="meta-value">
-														{new Date(budget.metadata.createdAt).toLocaleDateString("en-US", {
+														{new Date(
+															budget.metadata.createdAt
+														).toLocaleDateString("en-US", {
 															month: "short",
 															day: "numeric",
 															hour: "2-digit",

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import "../styles/BudgetDetail.css";
+import "../App.css";
 
 export default function BudgetDetail() {
 	const location = useLocation();
@@ -15,12 +15,14 @@ export default function BudgetDetail() {
 		// Get budget data from location state or localStorage
 		if (location.state?.budgetData) {
 			setBudgetData(location.state.budgetData);
-			
+
 			// Try to get the AI-generated breakdown
 			const activeKey = location.state.budgetData.metadata?.startDate
-				? new Date(location.state.budgetData.metadata.startDate).toISOString().split("T")[0]
+				? new Date(location.state.budgetData.metadata.startDate)
+						.toISOString()
+						.split("T")[0]
 				: null;
-			
+
 			if (activeKey) {
 				const breakdowns = localStorage.getItem("budgetBreakdowns");
 				if (breakdowns) {
@@ -63,10 +65,15 @@ export default function BudgetDetail() {
 		const endDate = new Date(metadata.endDate);
 		const now = new Date();
 
-		const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
-		const elapsedDays = Math.ceil((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
+		const totalDays =
+			Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+		const elapsedDays =
+			Math.ceil((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
 
-		const progression = Math.min(100, Math.max(0, (elapsedDays / totalDays) * 100));
+		const progression = Math.min(
+			100,
+			Math.max(0, (elapsedDays / totalDays) * 100)
+		);
 		return Math.round(progression);
 	};
 
@@ -79,7 +86,10 @@ export default function BudgetDetail() {
 	};
 
 	const calculateTotalBudget = (dailyBudget, startDate, endDate) => {
-		const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) + 1;
+		const days =
+			Math.ceil(
+				(new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)
+			) + 1;
 		return (dailyBudget * days).toFixed(2);
 	};
 
@@ -102,7 +112,10 @@ export default function BudgetDetail() {
 				<div className="empty-state">
 					<h2>Budget Not Found</h2>
 					<p>The budget plan you're looking for doesn't exist.</p>
-					<button className="btn-dashboard" onClick={() => navigate("/dashboard")}>
+					<button
+						className="btn-dashboard"
+						onClick={() => navigate("/dashboard")}
+					>
 						Return to Dashboard
 					</button>
 				</div>
@@ -113,7 +126,11 @@ export default function BudgetDetail() {
 	const { metadata, daily } = budgetData;
 	const progression = calculateProgression(metadata);
 	const daysRemaining = calculateDaysRemaining(metadata);
-	const totalBudget = calculateTotalBudget(daily, metadata.startDate, metadata.endDate);
+	const totalBudget = calculateTotalBudget(
+		daily,
+		metadata.startDate,
+		metadata.endDate
+	);
 	const startDate = new Date(metadata.startDate);
 	const endDate = new Date(metadata.endDate);
 
@@ -145,15 +162,30 @@ export default function BudgetDetail() {
 						<div className="timeline-grid">
 							<div className="timeline-item">
 								<span className="label">Start Date</span>
-								<span className="value">{startDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
+								<span className="value">
+									{startDate.toLocaleDateString("en-US", {
+										month: "long",
+										day: "numeric",
+										year: "numeric",
+									})}
+								</span>
 							</div>
 							<div className="timeline-item">
 								<span className="label">End Date</span>
-								<span className="value">{endDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
+								<span className="value">
+									{endDate.toLocaleDateString("en-US", {
+										month: "long",
+										day: "numeric",
+										year: "numeric",
+									})}
+								</span>
 							</div>
 							<div className="timeline-item">
 								<span className="label">Total Duration</span>
-								<span className="value">{Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1} days</span>
+								<span className="value">
+									{Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1}{" "}
+									days
+								</span>
 							</div>
 							<div className="timeline-item">
 								<span className="label">Days Remaining</span>
@@ -167,8 +199,8 @@ export default function BudgetDetail() {
 						<h3>Progress</h3>
 						<div className="progress-display">
 							<div className="progress-bar-large">
-								<div 
-									className="progress-fill-large" 
+								<div
+									className="progress-fill-large"
 									style={{ width: `${progression}%` }}
 								></div>
 							</div>
@@ -191,16 +223,26 @@ export default function BudgetDetail() {
 						<div className="breakdown-grid">
 							{budgetBreakdown?.customBreakdown ? (
 								// AI-generated breakdown
-								Object.entries(budgetBreakdown.customBreakdown).map(([key, category]) => (
-									<div key={key} className="breakdown-card">
-										<span className="breakdown-label">{key.charAt(0).toUpperCase() + key.slice(1)}</span>
-										<span className="breakdown-amount">${category.amount?.toFixed(2) || "0.00"}</span>
-										<span className="breakdown-sublabel">{category.percentage || 0}% of income</span>
-										{category.description && (
-											<span className="breakdown-description">{category.description}</span>
-										)}
-									</div>
-								))
+								Object.entries(budgetBreakdown.customBreakdown).map(
+									([key, category]) => (
+										<div key={key} className="breakdown-card">
+											<span className="breakdown-label">
+												{key.charAt(0).toUpperCase() + key.slice(1)}
+											</span>
+											<span className="breakdown-amount">
+												${category.amount?.toFixed(2) || "0.00"}
+											</span>
+											<span className="breakdown-sublabel">
+												{category.percentage || 0}% of income
+											</span>
+											{category.description && (
+												<span className="breakdown-description">
+													{category.description}
+												</span>
+											)}
+										</div>
+									)
+								)
 							) : (
 								// Fallback to manual calculation
 								<>
@@ -215,13 +257,26 @@ export default function BudgetDetail() {
 										<span className="breakdown-sublabel">for entire plan</span>
 									</div>
 									<div className="breakdown-card">
-										<span className="breakdown-label">Budget Spent to Date</span>
-										<span className="breakdown-amount">${(daily * (Math.ceil((new Date() - startDate) / (1000 * 60 * 60 * 24)) + 1)).toFixed(2)}</span>
+										<span className="breakdown-label">
+											Budget Spent to Date
+										</span>
+										<span className="breakdown-amount">
+											$
+											{(
+												daily *
+												(Math.ceil(
+													(new Date() - startDate) / (1000 * 60 * 60 * 24)
+												) +
+													1)
+											).toFixed(2)}
+										</span>
 										<span className="breakdown-sublabel">estimated</span>
 									</div>
 									<div className="breakdown-card">
 										<span className="breakdown-label">Budget Remaining</span>
-										<span className="breakdown-amount">${(daily * daysRemaining).toFixed(2)}</span>
+										<span className="breakdown-amount">
+											${(daily * daysRemaining).toFixed(2)}
+										</span>
 										<span className="breakdown-sublabel">estimated</span>
 									</div>
 								</>
@@ -230,19 +285,20 @@ export default function BudgetDetail() {
 					</section>
 
 					{/* AI Recommendations */}
-					{budgetBreakdown?.recommendations && budgetBreakdown.recommendations.length > 0 && (
-						<section className="recommendations-section">
-							<h3>💡 AI Recommendations</h3>
-							<div className="recommendations-list">
-								{budgetBreakdown.recommendations.map((rec, idx) => (
-									<div key={idx} className="recommendation-item">
-										<span className="rec-icon">💰</span>
-										<p>{rec}</p>
-									</div>
-								))}
-							</div>
-						</section>
-					)}
+					{budgetBreakdown?.recommendations &&
+						budgetBreakdown.recommendations.length > 0 && (
+							<section className="recommendations-section">
+								<h3>💡 AI Recommendations</h3>
+								<div className="recommendations-list">
+									{budgetBreakdown.recommendations.map((rec, idx) => (
+										<div key={idx} className="recommendation-item">
+											<span className="rec-icon">💰</span>
+											<p>{rec}</p>
+										</div>
+									))}
+								</div>
+							</section>
+						)}
 
 					{/* AI Alerts */}
 					{budgetBreakdown?.alerts && budgetBreakdown.alerts.length > 0 && (
@@ -261,7 +317,16 @@ export default function BudgetDetail() {
 					{/* Creation Info */}
 					{metadata.createdAt && (
 						<section className="info-section">
-							<p>Created on {new Date(metadata.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
+							<p>
+								Created on{" "}
+								{new Date(metadata.createdAt).toLocaleDateString("en-US", {
+									month: "long",
+									day: "numeric",
+									year: "numeric",
+									hour: "2-digit",
+									minute: "2-digit",
+								})}
+							</p>
 						</section>
 					)}
 
@@ -269,11 +334,14 @@ export default function BudgetDetail() {
 					{budgetBreakdown?.reasoning && (
 						<section className="reasoning-section">
 							<h3>📊 Why This Budget?</h3>
-							<div className="reasoning-box">
-								{budgetBreakdown.reasoning}
-							</div>
+							<div className="reasoning-box">{budgetBreakdown.reasoning}</div>
 							{budgetBreakdown.source && (
-								<p className="source-label">Generated by {budgetBreakdown.source === 'ai' ? 'AI Analysis' : 'Local Algorithm'}</p>
+								<p className="source-label">
+									Generated by{" "}
+									{budgetBreakdown.source === "ai"
+										? "AI Analysis"
+										: "Local Algorithm"}
+								</p>
 							)}
 						</section>
 					)}
@@ -281,13 +349,22 @@ export default function BudgetDetail() {
 
 				{/* Action Buttons */}
 				<div className="action-buttons">
-					<button className="btn-primary" onClick={() => navigate("/create-budget-plan")}>
+					<button
+						className="btn-primary"
+						onClick={() => navigate("/create-budget-plan")}
+					>
 						Create New Plan
 					</button>
-					<button className="btn-secondary" onClick={() => navigate("/budget-plans")}>
+					<button
+						className="btn-secondary"
+						onClick={() => navigate("/budget-plans")}
+					>
 						View All Plans
 					</button>
-					<button className="btn-secondary" onClick={() => navigate("/profile")}>
+					<button
+						className="btn-secondary"
+						onClick={() => navigate("/profile")}
+					>
 						Go to Profile
 					</button>
 				</div>

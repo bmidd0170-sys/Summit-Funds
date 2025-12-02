@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import "../styles/Profile.css";
+import "../App.css";
 
 export default function Profile() {
 	const navigate = useNavigate();
@@ -85,13 +85,15 @@ export default function Profile() {
 				setFormData(JSON.parse(savedProfile));
 			}
 		}
-		
+
 		// Load currency display settings if available
-		const savedCurrencySettings = localStorage.getItem("currencyDisplaySettings");
+		const savedCurrencySettings = localStorage.getItem(
+			"currencyDisplaySettings"
+		);
 		if (savedCurrencySettings) {
 			setCurrencyDisplay(JSON.parse(savedCurrencySettings));
 		}
-		
+
 		setLoading(false);
 	}, [location.state?.fromQuiz]);
 
@@ -132,7 +134,8 @@ export default function Profile() {
 		const newErrors = {};
 
 		if (!formData.monthlyIncome || parseFloat(formData.monthlyIncome) <= 0) {
-			newErrors.monthlyIncome = "Monthly income is required and must be positive";
+			newErrors.monthlyIncome =
+				"Monthly income is required and must be positive";
 		}
 
 		if (!formData.housing || parseFloat(formData.housing) <= 0) {
@@ -153,7 +156,10 @@ export default function Profile() {
 
 		// Save to localStorage
 		localStorage.setItem("userProfile", JSON.stringify(formData));
-		localStorage.setItem("currencyDisplaySettings", JSON.stringify(currencyDisplay));
+		localStorage.setItem(
+			"currencyDisplaySettings",
+			JSON.stringify(currencyDisplay)
+		);
 
 		// Redirect to dashboard
 		navigate("/dashboard");
@@ -178,26 +184,31 @@ export default function Profile() {
 
 	return (
 		<div className="profile-container">
-		{/* Header */}
-		<header className="profile-header">
-			<div className="header-left">
-				<button className="logo logo-btn" onClick={() => navigate("/dashboard")}>💰 Summit Funds</button>
-				<div className="header-title">
-					<h1>Financial Profile</h1>
-					<p>{user?.email}</p>
+			{/* Header */}
+			<header className="profile-header">
+				<div className="header-left">
+					<button
+						className="logo logo-btn"
+						onClick={() => navigate("/dashboard")}
+					>
+						💰 Summit Funds
+					</button>
+					<div className="header-title">
+						<h1>Financial Profile</h1>
+						<p>{user?.email}</p>
+					</div>
 				</div>
-			</div>
-			<div className="header-buttons">
-				<button className="btn-profile" onClick={() => navigate("/profile")}>
-					👤 Profile
-				</button>
-				<button className="btn-logout" onClick={handleLogout}>
-					Logout
-				</button>
-			</div>
-		</header>
+				<div className="header-buttons">
+					<button className="btn-profile" onClick={() => navigate("/profile")}>
+						👤 Profile
+					</button>
+					<button className="btn-logout" onClick={handleLogout}>
+						Logout
+					</button>
+				</div>
+			</header>
 
-		{/* Main Content */}
+			{/* Main Content */}
 			<main className="profile-main">
 				<div className="profile-card">
 					<div className="profile-intro">
@@ -210,22 +221,22 @@ export default function Profile() {
 					</div>
 
 					<form onSubmit={handleSaveProfile} className="profile-form">
-					{/* Monthly Income Section */}
-					<section className="form-section">
-						<h3>Monthly Income</h3>
-						<div className="form-group">
-							<label htmlFor="monthlyIncome">
-								Monthly Income <span className="required">*</span>
-							</label>
-							<div className="currency-wrapper">
-								<button
-									type="button"
-									className="currency-prefix-btn"
-									onClick={() => toggleCurrencyDisplay("monthlyIncome")}
-									title="Click to toggle currency display"
-								>
-									{currencyDisplay.monthlyIncome}
-								</button>
+						{/* Monthly Income Section */}
+						<section className="form-section">
+							<h3>Monthly Income</h3>
+							<div className="form-group">
+								<label htmlFor="monthlyIncome">
+									Monthly Income <span className="required">*</span>
+								</label>
+								<div className="currency-wrapper">
+									<button
+										type="button"
+										className="currency-prefix-btn"
+										onClick={() => toggleCurrencyDisplay("monthlyIncome")}
+										title="Click to toggle currency display"
+									>
+										{currencyDisplay.monthlyIncome}
+									</button>
 									<input
 										type="number"
 										id="monthlyIncome"
@@ -238,109 +249,108 @@ export default function Profile() {
 										disabled={currencyDisplay.monthlyIncome === "None"}
 										className={errors.monthlyIncome ? "input-error" : ""}
 									/>
-							</div>
-							{errors.monthlyIncome && (
-								<span className="error-text">{errors.monthlyIncome}</span>
-							)}
-						</div>
-					</section>
-
-					{/* Financial Summary Stats Section */}
-					{formData.monthlyIncome && (
-						<section className="form-section stats-section">
-							<h3>My Financial Summary</h3>
-							<div className="stats-grid">
-								<div className="stat-card">
-									<div className="stat-label">Total Expenses</div>
-									<div className="stat-value">
-										${(
-											(parseFloat(formData.housing) || 0) +
-											(parseFloat(formData.utilities) || 0) +
-											(parseFloat(formData.groceries) || 0) +
-											(parseFloat(formData.transportation) || 0) +
-											(parseFloat(formData.insurance) || 0) +
-											(parseFloat(formData.phone) || 0) +
-											(parseFloat(formData.internet) || 0) +
-											(parseFloat(formData.dining) || 0) +
-											(parseFloat(formData.entertainment) || 0) +
-											(parseFloat(formData.subscriptions) || 0) +
-											(parseFloat(formData.shopping) || 0) +
-											(parseFloat(formData.gym) || 0) +
-											(parseFloat(formData.creditCardPayment) || 0) +
-											(parseFloat(formData.studentLoan) || 0) +
-											(parseFloat(formData.personalLoan) || 0)
-										).toFixed(2)}
-									</div>
 								</div>
-								<div className="stat-card">
-									<div className="stat-label">Remaining</div>
-									<div className="stat-value remaining">
-										${(
-											(parseFloat(formData.monthlyIncome) || 0) -
-											(
-												(parseFloat(formData.housing) || 0) +
-												(parseFloat(formData.utilities) || 0) +
-												(parseFloat(formData.groceries) || 0) +
-												(parseFloat(formData.transportation) || 0) +
-												(parseFloat(formData.insurance) || 0) +
-												(parseFloat(formData.phone) || 0) +
-												(parseFloat(formData.internet) || 0) +
-												(parseFloat(formData.dining) || 0) +
-												(parseFloat(formData.entertainment) || 0) +
-												(parseFloat(formData.subscriptions) || 0) +
-												(parseFloat(formData.shopping) || 0) +
-												(parseFloat(formData.gym) || 0) +
-												(parseFloat(formData.creditCardPayment) || 0) +
-												(parseFloat(formData.studentLoan) || 0) +
-												(parseFloat(formData.personalLoan) || 0)
-											)
-										).toFixed(2)}
-									</div>
-								</div>
-								<div className="stat-card">
-									<div className="stat-label">Budget Used</div>
-									<div className="stat-value">
-										{(
-											((
-												(parseFloat(formData.housing) || 0) +
-												(parseFloat(formData.utilities) || 0) +
-												(parseFloat(formData.groceries) || 0) +
-												(parseFloat(formData.transportation) || 0) +
-												(parseFloat(formData.insurance) || 0) +
-												(parseFloat(formData.phone) || 0) +
-												(parseFloat(formData.internet) || 0) +
-												(parseFloat(formData.dining) || 0) +
-												(parseFloat(formData.entertainment) || 0) +
-												(parseFloat(formData.subscriptions) || 0) +
-												(parseFloat(formData.shopping) || 0) +
-												(parseFloat(formData.gym) || 0) +
-												(parseFloat(formData.creditCardPayment) || 0) +
-												(parseFloat(formData.studentLoan) || 0) +
-												(parseFloat(formData.personalLoan) || 0)
-											) / (parseFloat(formData.monthlyIncome) || 1)) * 100
-										).toFixed(1)}%
-									</div>
-								</div>
+								{errors.monthlyIncome && (
+									<span className="error-text">{errors.monthlyIncome}</span>
+								)}
 							</div>
 						</section>
-					)}
-
-					{/* Essential Expenses Section */}
+						{/* Financial Summary Stats Section */}
+						{formData.monthlyIncome && (
+							<section className="form-section stats-section">
+								<h3>My Financial Summary</h3>
+								<div className="stats-grid">
+									<div className="stat-card">
+										<div className="stat-label">Total Expenses</div>
+										<div className="stat-value">
+											$
+											{(
+												(parseFloat(formData.housing) || 0) +
+												(parseFloat(formData.utilities) || 0) +
+												(parseFloat(formData.groceries) || 0) +
+												(parseFloat(formData.transportation) || 0) +
+												(parseFloat(formData.insurance) || 0) +
+												(parseFloat(formData.phone) || 0) +
+												(parseFloat(formData.internet) || 0) +
+												(parseFloat(formData.dining) || 0) +
+												(parseFloat(formData.entertainment) || 0) +
+												(parseFloat(formData.subscriptions) || 0) +
+												(parseFloat(formData.shopping) || 0) +
+												(parseFloat(formData.gym) || 0) +
+												(parseFloat(formData.creditCardPayment) || 0) +
+												(parseFloat(formData.studentLoan) || 0) +
+												(parseFloat(formData.personalLoan) || 0)
+											).toFixed(2)}
+										</div>
+									</div>
+									<div className="stat-card">
+										<div className="stat-label">Remaining</div>
+										<div className="stat-value remaining">
+											$
+											{(
+												(parseFloat(formData.monthlyIncome) || 0) -
+												((parseFloat(formData.housing) || 0) +
+													(parseFloat(formData.utilities) || 0) +
+													(parseFloat(formData.groceries) || 0) +
+													(parseFloat(formData.transportation) || 0) +
+													(parseFloat(formData.insurance) || 0) +
+													(parseFloat(formData.phone) || 0) +
+													(parseFloat(formData.internet) || 0) +
+													(parseFloat(formData.dining) || 0) +
+													(parseFloat(formData.entertainment) || 0) +
+													(parseFloat(formData.subscriptions) || 0) +
+													(parseFloat(formData.shopping) || 0) +
+													(parseFloat(formData.gym) || 0) +
+													(parseFloat(formData.creditCardPayment) || 0) +
+													(parseFloat(formData.studentLoan) || 0) +
+													(parseFloat(formData.personalLoan) || 0))
+											).toFixed(2)}
+										</div>
+									</div>
+									<div className="stat-card">
+										<div className="stat-label">Budget Used</div>
+										<div className="stat-value">
+											{(
+												(((parseFloat(formData.housing) || 0) +
+													(parseFloat(formData.utilities) || 0) +
+													(parseFloat(formData.groceries) || 0) +
+													(parseFloat(formData.transportation) || 0) +
+													(parseFloat(formData.insurance) || 0) +
+													(parseFloat(formData.phone) || 0) +
+													(parseFloat(formData.internet) || 0) +
+													(parseFloat(formData.dining) || 0) +
+													(parseFloat(formData.entertainment) || 0) +
+													(parseFloat(formData.subscriptions) || 0) +
+													(parseFloat(formData.shopping) || 0) +
+													(parseFloat(formData.gym) || 0) +
+													(parseFloat(formData.creditCardPayment) || 0) +
+													(parseFloat(formData.studentLoan) || 0) +
+													(parseFloat(formData.personalLoan) || 0)) /
+													(parseFloat(formData.monthlyIncome) || 1)) *
+												100
+											).toFixed(1)}
+											%
+										</div>
+									</div>
+								</div>
+							</section>
+						)}
+						{/* Essential Expenses Section */}
 						<section className="form-section">
 							<h3>Essential Expenses</h3>
-						<div className="form-group">
-							<label htmlFor="housing">
-								Housing (Rent/Mortgage) <span className="required">*</span>
-							</label>
-							<div className="currency-wrapper">
-								<button
-									type="button"
-									className="currency-prefix-btn"
-									onClick={() => toggleCurrencyDisplay("housing")}
-									title="Click to toggle currency display"
-								>
-									{currencyDisplay.housing}
-								</button>
+							<div className="form-group">
+								<label htmlFor="housing">
+									Housing (Rent/Mortgage) <span className="required">*</span>
+								</label>
+								<div className="currency-wrapper">
+									<button
+										type="button"
+										className="currency-prefix-btn"
+										onClick={() => toggleCurrencyDisplay("housing")}
+										title="Click to toggle currency display"
+									>
+										{currencyDisplay.housing}
+									</button>
 									<input
 										type="number"
 										id="housing"
@@ -353,11 +363,12 @@ export default function Profile() {
 										disabled={currencyDisplay.housing === "None"}
 										className={errors.housing ? "input-error" : ""}
 									/>
-							</div>
-							{errors.housing && (
-								<span className="error-text">{errors.housing}</span>
-							)}
-						</div>							<div className="form-grid">
+								</div>
+								{errors.housing && (
+									<span className="error-text">{errors.housing}</span>
+								)}
+							</div>{" "}
+							<div className="form-grid">
 								<div className="form-group">
 									<label htmlFor="utilities">Utilities</label>
 									<div className="currency-wrapper">
@@ -504,212 +515,211 @@ export default function Profile() {
 								</div>
 							</div>
 						</section>
-
 						{/* Debt Payments Section */}
-					<section className="form-section">
-						<h3>Debt Payments</h3>
-						<div className="form-grid">
-							<div className="form-group">
-								<label htmlFor="creditCardPayment">Credit Card</label>
-								<div className="currency-wrapper">
-									<button
-										type="button"
-										className="currency-prefix-btn"
-										onClick={() => toggleCurrencyDisplay("creditCardPayment")}
-										title="Click to toggle currency display"
-									>
-										{currencyDisplay.creditCardPayment}
-									</button>
-								<input
-									type="number"
-									id="creditCardPayment"
-									name="creditCardPayment"
-									value={formData.creditCardPayment}
-									onChange={handleChange}
-									placeholder="e.g., 200"
-									step="0.01"
-									min="0"
-									disabled={currencyDisplay.creditCardPayment === "None"}
-								/>
+						<section className="form-section">
+							<h3>Debt Payments</h3>
+							<div className="form-grid">
+								<div className="form-group">
+									<label htmlFor="creditCardPayment">Credit Card</label>
+									<div className="currency-wrapper">
+										<button
+											type="button"
+											className="currency-prefix-btn"
+											onClick={() => toggleCurrencyDisplay("creditCardPayment")}
+											title="Click to toggle currency display"
+										>
+											{currencyDisplay.creditCardPayment}
+										</button>
+										<input
+											type="number"
+											id="creditCardPayment"
+											name="creditCardPayment"
+											value={formData.creditCardPayment}
+											onChange={handleChange}
+											placeholder="e.g., 200"
+											step="0.01"
+											min="0"
+											disabled={currencyDisplay.creditCardPayment === "None"}
+										/>
+									</div>
+								</div>
+								<div className="form-group">
+									<label htmlFor="studentLoan">Student Loan</label>
+									<div className="currency-wrapper">
+										<button
+											type="button"
+											className="currency-prefix-btn"
+											onClick={() => toggleCurrencyDisplay("studentLoan")}
+											title="Click to toggle currency display"
+										>
+											{currencyDisplay.studentLoan}
+										</button>
+										<input
+											type="number"
+											id="studentLoan"
+											name="studentLoan"
+											value={formData.studentLoan}
+											onChange={handleChange}
+											placeholder="e.g., 200"
+											step="0.01"
+											min="0"
+											disabled={currencyDisplay.studentLoan === "None"}
+										/>
+									</div>
+								</div>
+								<div className="form-group">
+									<label htmlFor="personalLoan">Personal Loan</label>
+									<div className="currency-wrapper">
+										<button
+											type="button"
+											className="currency-prefix-btn"
+											onClick={() => toggleCurrencyDisplay("personalLoan")}
+											title="Click to toggle currency display"
+										>
+											{currencyDisplay.personalLoan}
+										</button>
+										<input
+											type="number"
+											id="personalLoan"
+											name="personalLoan"
+											value={formData.personalLoan}
+											onChange={handleChange}
+											placeholder="e.g., 150"
+											step="0.01"
+											min="0"
+											disabled={currencyDisplay.personalLoan === "None"}
+										/>
+									</div>
 								</div>
 							</div>
-							<div className="form-group">
-								<label htmlFor="studentLoan">Student Loan</label>
-								<div className="currency-wrapper">
-									<button
-										type="button"
-										className="currency-prefix-btn"
-										onClick={() => toggleCurrencyDisplay("studentLoan")}
-										title="Click to toggle currency display"
-									>
-										{currencyDisplay.studentLoan}
-									</button>
-								<input
-									type="number"
-									id="studentLoan"
-									name="studentLoan"
-									value={formData.studentLoan}
-									onChange={handleChange}
-									placeholder="e.g., 200"
-									step="0.01"
-									min="0"
-									disabled={currencyDisplay.studentLoan === "None"}
-								/>
+						</section>{" "}
+						{/* Discretionary Spending Section */}
+						<section className="form-section">
+							<h3>Discretionary Spending</h3>
+							<div className="form-grid">
+								<div className="form-group">
+									<label htmlFor="dining">Dining Out</label>
+									<div className="currency-wrapper">
+										<button
+											type="button"
+											className="currency-prefix-btn"
+											onClick={() => toggleCurrencyDisplay("dining")}
+											title="Click to toggle currency display"
+										>
+											{currencyDisplay.dining}
+										</button>
+										<input
+											type="number"
+											id="dining"
+											name="dining"
+											value={formData.dining}
+											onChange={handleChange}
+											placeholder="e.g., 200"
+											step="0.01"
+											min="0"
+											disabled={currencyDisplay.dining === "None"}
+										/>
+									</div>
+								</div>
+								<div className="form-group">
+									<label htmlFor="entertainment">Entertainment</label>
+									<div className="currency-wrapper">
+										<button
+											type="button"
+											className="currency-prefix-btn"
+											onClick={() => toggleCurrencyDisplay("entertainment")}
+											title="Click to toggle currency display"
+										>
+											{currencyDisplay.entertainment}
+										</button>
+										<input
+											type="number"
+											id="entertainment"
+											name="entertainment"
+											value={formData.entertainment}
+											onChange={handleChange}
+											placeholder="e.g., 100"
+											step="0.01"
+											min="0"
+											disabled={currencyDisplay.entertainment === "None"}
+										/>
+									</div>
+								</div>
+								<div className="form-group">
+									<label htmlFor="subscriptions">Subscriptions</label>
+									<div className="currency-wrapper">
+										<button
+											type="button"
+											className="currency-prefix-btn"
+											onClick={() => toggleCurrencyDisplay("subscriptions")}
+											title="Click to toggle currency display"
+										>
+											{currencyDisplay.subscriptions}
+										</button>
+										<input
+											type="number"
+											id="subscriptions"
+											name="subscriptions"
+											value={formData.subscriptions}
+											onChange={handleChange}
+											placeholder="e.g., 50"
+											step="0.01"
+											min="0"
+											disabled={currencyDisplay.subscriptions === "None"}
+										/>
+									</div>
+								</div>
+								<div className="form-group">
+									<label htmlFor="shopping">Shopping</label>
+									<div className="currency-wrapper">
+										<button
+											type="button"
+											className="currency-prefix-btn"
+											onClick={() => toggleCurrencyDisplay("shopping")}
+											title="Click to toggle currency display"
+										>
+											{currencyDisplay.shopping}
+										</button>
+										<input
+											type="number"
+											id="shopping"
+											name="shopping"
+											value={formData.shopping}
+											onChange={handleChange}
+											placeholder="e.g., 150"
+											step="0.01"
+											min="0"
+											disabled={currencyDisplay.shopping === "None"}
+										/>
+									</div>
+								</div>
+								<div className="form-group">
+									<label htmlFor="gym">Gym/Fitness</label>
+									<div className="currency-wrapper">
+										<button
+											type="button"
+											className="currency-prefix-btn"
+											onClick={() => toggleCurrencyDisplay("gym")}
+											title="Click to toggle currency display"
+										>
+											{currencyDisplay.gym}
+										</button>
+										<input
+											type="number"
+											id="gym"
+											name="gym"
+											value={formData.gym}
+											onChange={handleChange}
+											placeholder="e.g., 50"
+											step="0.01"
+											min="0"
+											disabled={currencyDisplay.gym === "None"}
+										/>
+									</div>
 								</div>
 							</div>
-							<div className="form-group">
-								<label htmlFor="personalLoan">Personal Loan</label>
-								<div className="currency-wrapper">
-									<button
-										type="button"
-										className="currency-prefix-btn"
-										onClick={() => toggleCurrencyDisplay("personalLoan")}
-										title="Click to toggle currency display"
-									>
-										{currencyDisplay.personalLoan}
-									</button>
-								<input
-									type="number"
-									id="personalLoan"
-									name="personalLoan"
-									value={formData.personalLoan}
-									onChange={handleChange}
-									placeholder="e.g., 150"
-									step="0.01"
-									min="0"
-									disabled={currencyDisplay.personalLoan === "None"}
-								/>
-								</div>
-							</div>
-						</div>
-					</section>						{/* Discretionary Spending Section */}
-					<section className="form-section">
-						<h3>Discretionary Spending</h3>
-						<div className="form-grid">
-							<div className="form-group">
-								<label htmlFor="dining">Dining Out</label>
-								<div className="currency-wrapper">
-									<button
-										type="button"
-										className="currency-prefix-btn"
-										onClick={() => toggleCurrencyDisplay("dining")}
-										title="Click to toggle currency display"
-									>
-										{currencyDisplay.dining}
-									</button>
-								<input
-									type="number"
-									id="dining"
-									name="dining"
-									value={formData.dining}
-									onChange={handleChange}
-									placeholder="e.g., 200"
-									step="0.01"
-									min="0"
-									disabled={currencyDisplay.dining === "None"}
-								/>
-								</div>
-							</div>
-							<div className="form-group">
-								<label htmlFor="entertainment">Entertainment</label>
-								<div className="currency-wrapper">
-									<button
-										type="button"
-										className="currency-prefix-btn"
-										onClick={() => toggleCurrencyDisplay("entertainment")}
-										title="Click to toggle currency display"
-									>
-										{currencyDisplay.entertainment}
-									</button>
-								<input
-									type="number"
-									id="entertainment"
-									name="entertainment"
-									value={formData.entertainment}
-									onChange={handleChange}
-									placeholder="e.g., 100"
-									step="0.01"
-									min="0"
-									disabled={currencyDisplay.entertainment === "None"}
-								/>
-								</div>
-							</div>
-							<div className="form-group">
-								<label htmlFor="subscriptions">Subscriptions</label>
-								<div className="currency-wrapper">
-									<button
-										type="button"
-										className="currency-prefix-btn"
-										onClick={() => toggleCurrencyDisplay("subscriptions")}
-										title="Click to toggle currency display"
-									>
-										{currencyDisplay.subscriptions}
-									</button>
-								<input
-									type="number"
-									id="subscriptions"
-									name="subscriptions"
-									value={formData.subscriptions}
-									onChange={handleChange}
-									placeholder="e.g., 50"
-									step="0.01"
-									min="0"
-									disabled={currencyDisplay.subscriptions === "None"}
-								/>
-								</div>
-							</div>
-							<div className="form-group">
-								<label htmlFor="shopping">Shopping</label>
-								<div className="currency-wrapper">
-									<button
-										type="button"
-										className="currency-prefix-btn"
-										onClick={() => toggleCurrencyDisplay("shopping")}
-										title="Click to toggle currency display"
-									>
-										{currencyDisplay.shopping}
-									</button>
-								<input
-									type="number"
-									id="shopping"
-									name="shopping"
-									value={formData.shopping}
-									onChange={handleChange}
-									placeholder="e.g., 150"
-									step="0.01"
-									min="0"
-									disabled={currencyDisplay.shopping === "None"}
-								/>
-								</div>
-							</div>
-							<div className="form-group">
-								<label htmlFor="gym">Gym/Fitness</label>
-								<div className="currency-wrapper">
-									<button
-										type="button"
-										className="currency-prefix-btn"
-										onClick={() => toggleCurrencyDisplay("gym")}
-										title="Click to toggle currency display"
-									>
-										{currencyDisplay.gym}
-									</button>
-									<input
-										type="number"
-										id="gym"
-										name="gym"
-										value={formData.gym}
-										onChange={handleChange}
-										placeholder="e.g., 50"
-										step="0.01"
-										min="0"
-										disabled={currencyDisplay.gym === "None"}
-									/>
-								</div>
-							</div>
-						</div>
-					</section>
-
-					{/* Submit Button */}
+						</section>
+						{/* Submit Button */}
 						<div className="form-actions">
 							<button type="submit" className="btn-save-profile">
 								Save Financial Profile

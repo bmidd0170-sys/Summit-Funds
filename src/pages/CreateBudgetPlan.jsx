@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { delayApiCall } from "../services/rateLimiter";
 import { generateCustomBudget } from "../services/customBudgetService";
-import "../styles/CreateBudgetPlan.css";
+import "../App.css";
 
 export default function CreateBudgetPlan() {
 	const navigate = useNavigate();
@@ -167,8 +167,14 @@ export default function CreateBudgetPlan() {
 				name: budgetName,
 				reason: budgetReason,
 				goalType: goalType,
-				monetaryGoal: goalType === "total" && monetaryGoal ? parseFloat(monetaryGoal) : null,
-				monthlyGoal: goalType === "monthly" && monthlyGoal ? parseFloat(monthlyGoal) : null,
+				monetaryGoal:
+					goalType === "total" && monetaryGoal
+						? parseFloat(monetaryGoal)
+						: null,
+				monthlyGoal:
+					goalType === "monthly" && monthlyGoal
+						? parseFloat(monthlyGoal)
+						: null,
 				startDate,
 				endDate,
 				createdAt: new Date().toISOString(),
@@ -180,7 +186,10 @@ export default function CreateBudgetPlan() {
 
 			// Redirect immediately to dashboard
 			navigate("/dashboard", {
-				state: { message: "Budget plan created! AI is generating your budget breakdown..." },
+				state: {
+					message:
+						"Budget plan created! AI is generating your budget breakdown...",
+				},
 			});
 
 			// Generate budget in background (non-blocking)
@@ -189,34 +198,51 @@ export default function CreateBudgetPlan() {
 					console.log("Starting budget generation...");
 					const budgetBreakdown = await generateCustomBudget(userProfile, {
 						goalType: goalType,
-						monetaryGoal: goalType === "total" && monetaryGoal ? parseFloat(monetaryGoal) : null,
-						monthlyGoal: goalType === "monthly" && monthlyGoal ? parseFloat(monthlyGoal) : null,
+						monetaryGoal:
+							goalType === "total" && monetaryGoal
+								? parseFloat(monetaryGoal)
+								: null,
+						monthlyGoal:
+							goalType === "monthly" && monthlyGoal
+								? parseFloat(monthlyGoal)
+								: null,
 						budgetName,
 						budgetReason,
 						startDate,
 						endDate,
 					});
 					console.log("Budget generation complete:", budgetBreakdown);
-					
+
 					// Validate the breakdown
 					if (!budgetBreakdown || !budgetBreakdown.customBreakdown) {
-						console.error("Invalid budget breakdown structure:", budgetBreakdown);
+						console.error(
+							"Invalid budget breakdown structure:",
+							budgetBreakdown
+						);
 						throw new Error("Budget breakdown missing customBreakdown");
 					}
-					
+
 					// Save the generated budget breakdown
 					const budgetBreakdowns = localStorage.getItem("budgetBreakdowns");
-					const breakdowns = budgetBreakdowns ? JSON.parse(budgetBreakdowns) : {};
-					
+					const breakdowns = budgetBreakdowns
+						? JSON.parse(budgetBreakdowns)
+						: {};
+
 					breakdowns[dateKey] = {
 						...budgetBreakdown,
 						planName: budgetName,
 						planReason: budgetReason,
 						goalType: goalType,
-						monetaryGoal: goalType === "total" && monetaryGoal ? parseFloat(monetaryGoal) : null,
-						monthlyGoal: goalType === "monthly" && monthlyGoal ? parseFloat(monthlyGoal) : null,
+						monetaryGoal:
+							goalType === "total" && monetaryGoal
+								? parseFloat(monetaryGoal)
+								: null,
+						monthlyGoal:
+							goalType === "monthly" && monthlyGoal
+								? parseFloat(monthlyGoal)
+								: null,
 					};
-					
+
 					console.log("Saving budget to localStorage under key:", dateKey);
 					localStorage.setItem("budgetBreakdowns", JSON.stringify(breakdowns));
 
@@ -225,13 +251,15 @@ export default function CreateBudgetPlan() {
 					localStorage.setItem("budgetMetadata", JSON.stringify(metadata));
 
 					// Trigger storage event to notify dashboard
-					window.dispatchEvent(new StorageEvent("storage", {
-						key: "budgetBreakdowns",
-						newValue: JSON.stringify(breakdowns),
-						oldValue: null,
-						storageArea: localStorage,
-					}));
-					
+					window.dispatchEvent(
+						new StorageEvent("storage", {
+							key: "budgetBreakdowns",
+							newValue: JSON.stringify(breakdowns),
+							oldValue: null,
+							storageArea: localStorage,
+						})
+					);
+
 					console.log("Budget generation and storage complete");
 				} catch (aiError) {
 					console.error("Error generating AI budget:", aiError.message);
@@ -285,7 +313,10 @@ export default function CreateBudgetPlan() {
 					</div>
 				</div>
 				<div className="header-buttons">
-					<button className="btn-back" onClick={() => navigate("/budget-plans")}>
+					<button
+						className="btn-back"
+						onClick={() => navigate("/budget-plans")}
+					>
 						← Back
 					</button>
 					<button className="btn-logout" onClick={handleLogoutClick}>
@@ -299,17 +330,37 @@ export default function CreateBudgetPlan() {
 				<div className="create-budget-content">
 					{/* Progress Indicator */}
 					<div className="progress-indicator">
-						<div className={`step ${step === "name" ? "active" : step !== "name" ? "completed" : ""}`}>
+						<div
+							className={`step ${
+								step === "name" ? "active" : step !== "name" ? "completed" : ""
+							}`}
+						>
 							<div className="step-number">1</div>
 							<div className="step-label">Name & Reason</div>
 						</div>
 						<div className="progress-line"></div>
-						<div className={`step ${step === "goal" ? "active" : step === "dates" || step === "review" ? "completed" : ""}`}>
+						<div
+							className={`step ${
+								step === "goal"
+									? "active"
+									: step === "dates" || step === "review"
+									? "completed"
+									: ""
+							}`}
+						>
 							<div className="step-number">2</div>
 							<div className="step-label">Monetary Goal</div>
 						</div>
 						<div className="progress-line"></div>
-						<div className={`step ${step === "dates" ? "active" : step === "review" ? "completed" : ""}`}>
+						<div
+							className={`step ${
+								step === "dates"
+									? "active"
+									: step === "review"
+									? "completed"
+									: ""
+							}`}
+						>
 							<div className="step-number">3</div>
 							<div className="step-label">Date Range</div>
 						</div>
@@ -328,7 +379,9 @@ export default function CreateBudgetPlan() {
 						<div className="step-content">
 							<div className="step-header">
 								<h2>📝 Name Your Budget Plan</h2>
-								<p>Give your budget plan a meaningful name and tell us your goal</p>
+								<p>
+									Give your budget plan a meaningful name and tell us your goal
+								</p>
 							</div>
 
 							<form onSubmit={handleNameSubmit} className="step-form">
@@ -344,13 +397,13 @@ export default function CreateBudgetPlan() {
 										maxLength={50}
 										autoFocus
 									/>
-									<small className="char-count">
-										{budgetName.length}/50
-									</small>
+									<small className="char-count">{budgetName.length}/50</small>
 								</div>
 
 								<div className="form-group">
-									<label htmlFor="budgetReason">Reason for Budget (Optional)</label>
+									<label htmlFor="budgetReason">
+										Reason for Budget (Optional)
+									</label>
 									<textarea
 										id="budgetReason"
 										placeholder="e.g., I want to save for a vacation, reduce spending, or prepare for a major purchase"
@@ -389,7 +442,10 @@ export default function CreateBudgetPlan() {
 								<ul>
 									<li>Include a time period (e.g., "Q1", "Spring 2026")</li>
 									<li>Be specific about your goal or focus area</li>
-									<li>Examples: "Vacation Fund Q1", "Debt Payoff Plan", "Daily Spending Tracker"</li>
+									<li>
+										Examples: "Vacation Fund Q1", "Debt Payoff Plan", "Daily
+										Spending Tracker"
+									</li>
 								</ul>
 							</div>
 						</div>
@@ -400,7 +456,10 @@ export default function CreateBudgetPlan() {
 						<div className="step-content">
 							<div className="step-header">
 								<h2>💰 Set Your Monetary Goal</h2>
-								<p>Enter a target savings or spending goal that our AI will factor into your budget recommendations (Optional)</p>
+								<p>
+									Enter a target savings or spending goal that our AI will
+									factor into your budget recommendations (Optional)
+								</p>
 							</div>
 
 							<form onSubmit={handleGoalSubmit} className="step-form">
@@ -452,7 +511,8 @@ export default function CreateBudgetPlan() {
 											/>
 										</div>
 										<small className="help-text">
-											Enter the total amount you want to save during this budget period
+											Enter the total amount you want to save during this budget
+											period
 										</small>
 									</div>
 								)}
@@ -488,10 +548,7 @@ export default function CreateBudgetPlan() {
 									>
 										← Back
 									</button>
-									<button
-										type="submit"
-										className="btn-next"
-									>
+									<button type="submit" className="btn-next">
 										Next: Set Dates →
 									</button>
 								</div>
@@ -501,10 +558,22 @@ export default function CreateBudgetPlan() {
 							<div className="info-box">
 								<h3>💡 Monetary Goal Examples</h3>
 								<ul>
-									<li><strong>Savings Goal:</strong> $5,000 - "I want to save $5,000 this quarter"</li>
-									<li><strong>Spending Cap:</strong> $2,000 - "I want to limit spending to $2,000/month"</li>
-									<li><strong>Emergency Fund:</strong> $10,000 - "I'm building an emergency fund of $10,000"</li>
-									<li><strong>Leave Empty:</strong> Skip this if you don't have a specific target</li>
+									<li>
+										<strong>Savings Goal:</strong> $5,000 - "I want to save
+										$5,000 this quarter"
+									</li>
+									<li>
+										<strong>Spending Cap:</strong> $2,000 - "I want to limit
+										spending to $2,000/month"
+									</li>
+									<li>
+										<strong>Emergency Fund:</strong> $10,000 - "I'm building an
+										emergency fund of $10,000"
+									</li>
+									<li>
+										<strong>Leave Empty:</strong> Skip this if you don't have a
+										specific target
+									</li>
 								</ul>
 							</div>
 						</div>
@@ -544,8 +613,7 @@ export default function CreateBudgetPlan() {
 											type="date"
 											min={
 												new Date(
-													new Date(startDate).getTime() +
-														24 * 60 * 60 * 1000
+													new Date(startDate).getTime() + 24 * 60 * 60 * 1000
 												)
 													.toISOString()
 													.split("T")[0]
@@ -598,8 +666,12 @@ export default function CreateBudgetPlan() {
 							<div className="info-box">
 								<h3>📊 Date Selection Tips</h3>
 								<ul>
-									<li>Shorter budgets (1-3 months) are better for focused goals</li>
-									<li>Longer budgets (6-12 months) help track long-term habits</li>
+									<li>
+										Shorter budgets (1-3 months) are better for focused goals
+									</li>
+									<li>
+										Longer budgets (6-12 months) help track long-term habits
+									</li>
 									<li>Align end date with financial milestones or seasons</li>
 									<li>Maximum duration: 12 months for realistic planning</li>
 								</ul>
@@ -616,61 +688,82 @@ export default function CreateBudgetPlan() {
 							</div>
 
 							<div className="review-section">
-							<div className="review-card">
-								<div className="review-item">
-									<span className="review-label">📝 Budget Name</span>
-									<span className="review-value">{budgetName}</span>
-								</div>
-
-								{budgetReason && (
+								<div className="review-card">
 									<div className="review-item">
-										<span className="review-label">💭 Goal/Reason</span>
-										<span className="review-value">{budgetReason}</span>
+										<span className="review-label">📝 Budget Name</span>
+										<span className="review-value">{budgetName}</span>
 									</div>
-								)}
 
-								{goalType === "total" && monetaryGoal && (
+									{budgetReason && (
+										<div className="review-item">
+											<span className="review-label">💭 Goal/Reason</span>
+											<span className="review-value">{budgetReason}</span>
+										</div>
+									)}
+
+									{goalType === "total" && monetaryGoal && (
+										<div className="review-item">
+											<span className="review-label">
+												💰 Total Savings Goal
+											</span>
+											<span className="review-value">
+												$
+												{parseFloat(monetaryGoal).toLocaleString("en-US", {
+													minimumFractionDigits: 2,
+													maximumFractionDigits: 2,
+												})}
+											</span>
+										</div>
+									)}
+
+									{goalType === "monthly" && monthlyGoal && (
+										<div className="review-item">
+											<span className="review-label">
+												📅 Monthly Savings Goal
+											</span>
+											<span className="review-value">
+												$
+												{parseFloat(monthlyGoal).toLocaleString("en-US", {
+													minimumFractionDigits: 2,
+													maximumFractionDigits: 2,
+												})}
+												/month
+											</span>
+										</div>
+									)}
+
 									<div className="review-item">
-										<span className="review-label">💰 Total Savings Goal</span>
-										<span className="review-value">${parseFloat(monetaryGoal).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+										<span className="review-label">📅 Start Date</span>
+										<span className="review-value">
+											{formatDate(startDate)}
+										</span>
 									</div>
-								)}
 
-								{goalType === "monthly" && monthlyGoal && (
 									<div className="review-item">
-										<span className="review-label">📅 Monthly Savings Goal</span>
-										<span className="review-value">${parseFloat(monthlyGoal).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month</span>
+										<span className="review-label">📅 End Date</span>
+										<span className="review-value">{formatDate(endDate)}</span>
 									</div>
-								)}
 
-								<div className="review-item">
-									<span className="review-label">📅 Start Date</span>
-									<span className="review-value">
-										{formatDate(startDate)}
-									</span>
-								</div>
-
-								<div className="review-item">
-									<span className="review-label">📅 End Date</span>
-									<span className="review-value">
-										{formatDate(endDate)}
-									</span>
-								</div>
-
-								<div className="review-item">
-									<span className="review-label">⏱️ Duration</span>
-									<span className="review-value">
-										{estimatedData?.durationDays} days (
-										≈ {estimatedData?.durationMonths} months)
-									</span>
-								</div>
-							</div>								{/* Info about next steps */}
+									<div className="review-item">
+										<span className="review-label">⏱️ Duration</span>
+										<span className="review-value">
+											{estimatedData?.durationDays} days ( ≈{" "}
+											{estimatedData?.durationMonths} months)
+										</span>
+									</div>
+								</div>{" "}
+								{/* Info about next steps */}
 								<div className="info-box success">
 									<h3>🎯 What Happens Next?</h3>
 									<p>
-										Once you create this budget plan, our AI will analyze your financial
-										profile and generate a personalized budget breakdown for the duration
-										you selected{(goalType === "total" && monetaryGoal) || (goalType === "monthly" && monthlyGoal) ? " while keeping your savings goal in mind" : ""}. You'll be able to:
+										Once you create this budget plan, our AI will analyze your
+										financial profile and generate a personalized budget
+										breakdown for the duration you selected
+										{(goalType === "total" && monetaryGoal) ||
+										(goalType === "monthly" && monthlyGoal)
+											? " while keeping your savings goal in mind"
+											: ""}
+										. You'll be able to:
 									</p>
 									<ul>
 										<li>View AI-powered budget recommendations</li>

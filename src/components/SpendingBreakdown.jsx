@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import { generateDailySpendingBreakdown } from "../services/aiSpendingService";
-import "../styles/SpendingBreakdown.css";
+import "../App.css";
 
-export default function SpendingBreakdown({ userProfile, selectedDate, dailyBudget }) {
+export default function SpendingBreakdown({
+	userProfile,
+	selectedDate,
+	dailyBudget,
+}) {
 	const [spending, setSpending] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [expanded, setExpanded] = useState(false);
@@ -95,19 +99,13 @@ export default function SpendingBreakdown({ userProfile, selectedDate, dailyBudg
 								{spending.timeSlots.map((slot, index) => (
 									<div key={index} className="time-slot">
 										<div className="slot-header">
-											<span className="slot-time">
-												{slot.timeRange}
-											</span>
-											<span className="slot-period">
-												{slot.period}
-											</span>
+											<span className="slot-time">{slot.timeRange}</span>
+											<span className="slot-period">{slot.period}</span>
 											<span className="slot-amount">
 												${slot.suggestedAmount.toFixed(2)}
 											</span>
 										</div>
-										<div className="slot-activity">
-											{slot.activity}
-										</div>
+										<div className="slot-activity">{slot.activity}</div>
 										{slot.tips && slot.tips.length > 0 && (
 											<div className="slot-tips">
 												<strong>Tips:</strong>
@@ -140,9 +138,7 @@ export default function SpendingBreakdown({ userProfile, selectedDate, dailyBudg
 									}`}
 								>
 									<span>Remaining</span>
-									<span className="amount">
-										${spending.savings.toFixed(2)}
-									</span>
+									<span className="amount">${spending.savings.toFixed(2)}</span>
 								</div>
 							</div>
 						</>

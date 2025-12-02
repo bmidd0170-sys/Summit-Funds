@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import BudgetChatbot from "./BudgetChatbot";
-import "../styles/FloatingChatbot.css";
+import "../App.css";
 
 export default function FloatingChatbot() {
 	const { user } = useAuth();
@@ -58,10 +58,11 @@ export default function FloatingChatbot() {
 			<BudgetChatbot
 				userProfile={userProfile}
 				budgetPlan={budgetPlan}
-				dailyBudget={userProfile.monthlyIncome ? userProfile.monthlyIncome / 30 : 0}
+				dailyBudget={
+					userProfile.monthlyIncome ? userProfile.monthlyIncome / 30 : 0
+				}
 				selectedDate={new Date()}
 			/>
 		</div>
 	);
 }
-

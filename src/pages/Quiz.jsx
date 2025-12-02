@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import "../styles/Quiz.css";
+import "../App.css";
 
 export default function Quiz() {
 	const navigate = useNavigate();
@@ -127,13 +127,17 @@ export default function Quiz() {
 		},
 		{
 			id: 9,
-			question: "Do you have any caregiving responsibilities? (elderly parents, children, etc.)",
+			question:
+				"Do you have any caregiving responsibilities? (elderly parents, children, etc.)",
 			type: "text",
 			options: [
 				{ label: "No caregiving responsibilities", value: "none" },
 				{ label: "Occasional caregiving", value: "occasional" },
 				{ label: "Part-time caregiving (10-20 hrs/week)", value: "parttime" },
-				{ label: "Significant caregiving (20+ hrs/week)", value: "significant" },
+				{
+					label: "Significant caregiving (20+ hrs/week)",
+					value: "significant",
+				},
 			],
 		},
 		{
@@ -164,7 +168,8 @@ export default function Quiz() {
 		},
 		{
 			id: 11,
-			question: "How much do you spend on utilities monthly? (electricity, water, gas)",
+			question:
+				"How much do you spend on utilities monthly? (electricity, water, gas)",
 			type: "currency",
 			options: [
 				{ label: "$0 - None / Included in rent", value: 0 },
@@ -188,7 +193,8 @@ export default function Quiz() {
 		},
 		{
 			id: 13,
-			question: "How much do you spend on transportation monthly? (car payment, gas, public transit, insurance)",
+			question:
+				"How much do you spend on transportation monthly? (car payment, gas, public transit, insurance)",
 			type: "currency",
 			options: [
 				{ label: "$0 - None / Walk or bike", value: 0 },
@@ -212,7 +218,8 @@ export default function Quiz() {
 		},
 		{
 			id: 15,
-			question: "How much do you spend on insurance monthly? (health, car, renters, etc.)",
+			question:
+				"How much do you spend on insurance monthly? (health, car, renters, etc.)",
 			type: "currency",
 			options: [
 				{ label: "$0 - None / Employer covered", value: 0 },
@@ -284,7 +291,8 @@ export default function Quiz() {
 		},
 		{
 			id: 21,
-			question: "How much do you spend on entertainment monthly? (movies, events, hobbies)",
+			question:
+				"How much do you spend on entertainment monthly? (movies, events, hobbies)",
 			type: "currency",
 			options: [
 				{ label: "$0 - None", value: 0 },
@@ -296,7 +304,8 @@ export default function Quiz() {
 		},
 		{
 			id: 22,
-			question: "How much do you spend on subscriptions monthly? (streaming, apps, memberships)",
+			question:
+				"How much do you spend on subscriptions monthly? (streaming, apps, memberships)",
 			type: "currency",
 			options: [
 				{ label: "$0 - None", value: 0 },
@@ -308,7 +317,8 @@ export default function Quiz() {
 		},
 		{
 			id: 23,
-			question: "How much do you spend on shopping monthly? (clothes, accessories, household items)",
+			question:
+				"How much do you spend on shopping monthly? (clothes, accessories, household items)",
 			type: "currency",
 			options: [
 				{ label: "$0 - Almost never", value: 0 },
@@ -364,30 +374,30 @@ export default function Quiz() {
 		try {
 			// Map quiz responses to profile form fields
 			const profileData = {
-				monthlyIncome: answers[1] || 0,        // Q1: Monthly income
-				employmentStatus: answers[2] || "",    // Q2: Employment status
-				industry: answers[3] || "",            // Q3: Industry/Field
-				workHoursPerWeek: answers[4] || 0,     // Q4: Hours per week
-				workStressLevel: answers[5] || "",     // Q5: Work stress
-				sideIncome: answers[6] || 0,           // Q6: Side income
-				livingSituation: answers[7] || "",     // Q7: Living situation
-				dependents: answers[8] || 0,           // Q8: Dependents
+				monthlyIncome: answers[1] || 0, // Q1: Monthly income
+				employmentStatus: answers[2] || "", // Q2: Employment status
+				industry: answers[3] || "", // Q3: Industry/Field
+				workHoursPerWeek: answers[4] || 0, // Q4: Hours per week
+				workStressLevel: answers[5] || "", // Q5: Work stress
+				sideIncome: answers[6] || 0, // Q6: Side income
+				livingSituation: answers[7] || "", // Q7: Living situation
+				dependents: answers[8] || 0, // Q8: Dependents
 				caregivingResponsibilities: answers[9] || "", // Q9: Caregiving
-				housing: answers[10] || 0,             // Q10: Housing
-				utilities: answers[11] || 0,           // Q11: Utilities
-				groceries: answers[12] || 0,           // Q12: Groceries
-				transportation: answers[13] || 0,      // Q13: Transportation
-				phone: answers[14] || 0,               // Q14: Phone
-				insurance: answers[15] || 0,           // Q15: Insurance
-				internet: answers[16] || 0,            // Q16: Internet
-				creditCardPayment: answers[17] || 0,   // Q17: Credit card
-				studentLoan: answers[18] || 0,         // Q18: Student loan
-				personalLoan: answers[19] || 0,        // Q19: Personal loan
-				dining: answers[20] || 0,              // Q20: Dining out
-				entertainment: answers[21] || 0,       // Q21: Entertainment
-				subscriptions: answers[22] || 0,       // Q22: Subscriptions
-				shopping: answers[23] || 0,            // Q23: Shopping
-				gym: answers[24] || 0,                 // Q24: Gym/Fitness
+				housing: answers[10] || 0, // Q10: Housing
+				utilities: answers[11] || 0, // Q11: Utilities
+				groceries: answers[12] || 0, // Q12: Groceries
+				transportation: answers[13] || 0, // Q13: Transportation
+				phone: answers[14] || 0, // Q14: Phone
+				insurance: answers[15] || 0, // Q15: Insurance
+				internet: answers[16] || 0, // Q16: Internet
+				creditCardPayment: answers[17] || 0, // Q17: Credit card
+				studentLoan: answers[18] || 0, // Q18: Student loan
+				personalLoan: answers[19] || 0, // Q19: Personal loan
+				dining: answers[20] || 0, // Q20: Dining out
+				entertainment: answers[21] || 0, // Q21: Entertainment
+				subscriptions: answers[22] || 0, // Q22: Subscriptions
+				shopping: answers[23] || 0, // Q23: Shopping
+				gym: answers[24] || 0, // Q24: Gym/Fitness
 			};
 
 			// Save quiz responses to localStorage
@@ -441,26 +451,31 @@ export default function Quiz() {
 
 	return (
 		<div className="quiz-container">
-		{/* Header */}
-		<header className="quiz-header">
-			<div className="header-left">
-				<button className="logo logo-btn" onClick={() => navigate("/dashboard")}>💰 Summit Funds</button>
-				<div className="header-title">
-					<h1>Financial Quiz</h1>
-					<p>{user?.email}</p>
+			{/* Header */}
+			<header className="quiz-header">
+				<div className="header-left">
+					<button
+						className="logo logo-btn"
+						onClick={() => navigate("/dashboard")}
+					>
+						💰 Summit Funds
+					</button>
+					<div className="header-title">
+						<h1>Financial Quiz</h1>
+						<p>{user?.email}</p>
+					</div>
 				</div>
-			</div>
-			<div className="header-buttons">
-				<button className="btn-profile" onClick={() => navigate("/profile")}>
-					👤 Profile
-				</button>
-				<button className="btn-logout" onClick={handleLogout}>
-					Logout
-				</button>
-			</div>
-		</header>
+				<div className="header-buttons">
+					<button className="btn-profile" onClick={() => navigate("/profile")}>
+						👤 Profile
+					</button>
+					<button className="btn-logout" onClick={handleLogout}>
+						Logout
+					</button>
+				</div>
+			</header>
 
-		{/* Main Content */}
+			{/* Main Content */}
 			<main className="quiz-main">
 				<div className="quiz-card">
 					{/* Progress Bar */}

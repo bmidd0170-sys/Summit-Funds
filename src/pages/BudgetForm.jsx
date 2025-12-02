@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import "../styles/BudgetForm.css";
+import "../App.css";
 
 export default function BudgetForm() {
 	const navigate = useNavigate();
@@ -73,7 +73,11 @@ export default function BudgetForm() {
 	};
 
 	if (!profile) {
-		return <div className="budget-form-container"><p>Loading...</p></div>;
+		return (
+			<div className="budget-form-container">
+				<p>Loading...</p>
+			</div>
+		);
 	}
 
 	return (

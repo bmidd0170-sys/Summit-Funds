@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { generateSavingSteps } from "../services/customBudgetService";
-import "../styles/ProfileInfo.css";
+import "../App.css";
 
 export default function Profile() {
 	const navigate = useNavigate();
@@ -66,9 +66,9 @@ export default function Profile() {
 					"Look for subscriptions you're not using and cancel them",
 					"Set up automatic transfers to savings account",
 					"Create a savings goal and track your progress",
-					"Try the 30-day rule before making purchases"
+					"Try the 30-day rule before making purchases",
 				],
-				source: "local"
+				source: "local",
 			});
 			setShowSavingSteps(true);
 		} finally {
@@ -80,7 +80,7 @@ export default function Profile() {
 		if (!profile) return null;
 
 		const monthlyIncome = parseFloat(profile.monthlyIncome) || 0;
-		
+
 		// Calculate recommended budget breakdown (50/30/20 rule)
 		const essentialsTarget = monthlyIncome * 0.5;
 		const discretionaryTarget = monthlyIncome * 0.3;
@@ -118,7 +118,10 @@ export default function Profile() {
 			essentialsPercent: ((essentials / essentialsTarget) * 100).toFixed(1),
 			discretionary,
 			discretionaryTarget,
-			discretionaryPercent: ((discretionary / discretionaryTarget) * 100).toFixed(1),
+			discretionaryPercent: (
+				(discretionary / discretionaryTarget) *
+				100
+			).toFixed(1),
 			debt,
 			totalExpenses,
 			remaining,
@@ -141,7 +144,10 @@ export default function Profile() {
 			{/* Header */}
 			<header className="profile-info-header">
 				<div className="header-left">
-					<button className="logo logo-btn" onClick={() => navigate("/dashboard")}>
+					<button
+						className="logo logo-btn"
+						onClick={() => navigate("/dashboard")}
+					>
 						💰 Summit Funds
 					</button>
 					<div className="header-title">
@@ -167,7 +173,10 @@ export default function Profile() {
 							<div className="no-profile-icon">📝</div>
 							<h2>No Profile Data Yet</h2>
 							<p>Complete the quiz to create your financial profile.</p>
-							<button className="btn-take-quiz" onClick={() => navigate("/quiz")}>
+							<button
+								className="btn-take-quiz"
+								onClick={() => navigate("/quiz")}
+							>
 								Take the Quiz
 							</button>
 						</div>
@@ -178,7 +187,11 @@ export default function Profile() {
 						<section className="profile-header-section">
 							<div className="profile-header-left">
 								{profileImage ? (
-									<img src={profileImage} alt="Profile" className="profile-avatar" />
+									<img
+										src={profileImage}
+										alt="Profile"
+										className="profile-avatar"
+									/>
 								) : (
 									<div className="profile-avatar-placeholder">👤</div>
 								)}
@@ -187,24 +200,35 @@ export default function Profile() {
 									<p className="profile-email">{user?.email}</p>
 								</div>
 							</div>
-						<div className="profile-header-actions">
-							<button className="btn-action btn-edit-finances" onClick={handleEditFinances}>
-								✏️ Edit Finances
-							</button>
-							<button className="btn-action btn-budget-plans" onClick={handleBudgetPlans}>
-								📋 View Budget Plans
-							</button>
-							<button className="btn-action btn-settings" onClick={handleSettings}>
-								⚙️ Settings
-							</button>
-						</div>
+							<div className="profile-header-actions">
+								<button
+									className="btn-action btn-edit-finances"
+									onClick={handleEditFinances}
+								>
+									✏️ Edit Finances
+								</button>
+								<button
+									className="btn-action btn-budget-plans"
+									onClick={handleBudgetPlans}
+								>
+									📋 View Budget Plans
+								</button>
+								<button
+									className="btn-action btn-settings"
+									onClick={handleSettings}
+								>
+									⚙️ Settings
+								</button>
+							</div>
 						</section>
 
 						{/* Current Income Card */}
 						<section className="income-section">
 							<div className="income-card">
 								<h3>💵 Monthly Income</h3>
-								<div className="income-amount">${progress.monthlyIncome.toFixed(2)}</div>
+								<div className="income-amount">
+									${progress.monthlyIncome.toFixed(2)}
+								</div>
 								<p className="income-label">Your current take-home income</p>
 							</div>
 						</section>
@@ -213,23 +237,34 @@ export default function Profile() {
 						<section className="budget-progress-section">
 							<h3>📊 Budget Progress (50/30/20 Rule)</h3>
 							<p className="budget-description">
-								The recommended breakdown: 50% for essentials, 30% for discretionary spending, 20% for savings
+								The recommended breakdown: 50% for essentials, 30% for
+								discretionary spending, 20% for savings
 							</p>
 
 							{/* Essentials */}
 							<div className="progress-item">
 								<div className="progress-label">
 									<span>Essential Expenses</span>
-									<span>${progress.essentials.toFixed(2)} / ${progress.essentialsTarget.toFixed(2)}</span>
+									<span>
+										${progress.essentials.toFixed(2)} / $
+										{progress.essentialsTarget.toFixed(2)}
+									</span>
 								</div>
 								<div className="progress-bar-container">
 									<div
-										className={`progress-bar ${progress.essentialsPercent > 100 ? "over-budget" : "on-track"}`}
-										style={{ width: `${Math.min(progress.essentialsPercent, 100)}%` }}
+										className={`progress-bar ${
+											progress.essentialsPercent > 100
+												? "over-budget"
+												: "on-track"
+										}`}
+										style={{
+											width: `${Math.min(progress.essentialsPercent, 100)}%`,
+										}}
 									></div>
 								</div>
 								<p className="progress-status">
-									{progress.essentialsPercent}% of budget {progress.essentialsPercent > 100 ? "⚠️ Over" : "✓ On Track"}
+									{progress.essentialsPercent}% of budget{" "}
+									{progress.essentialsPercent > 100 ? "⚠️ Over" : "✓ On Track"}
 								</p>
 							</div>
 
@@ -237,16 +272,28 @@ export default function Profile() {
 							<div className="progress-item">
 								<div className="progress-label">
 									<span>Discretionary Spending</span>
-									<span>${progress.discretionary.toFixed(2)} / ${progress.discretionaryTarget.toFixed(2)}</span>
+									<span>
+										${progress.discretionary.toFixed(2)} / $
+										{progress.discretionaryTarget.toFixed(2)}
+									</span>
 								</div>
 								<div className="progress-bar-container">
 									<div
-										className={`progress-bar ${progress.discretionaryPercent > 100 ? "over-budget" : "on-track"}`}
-										style={{ width: `${Math.min(progress.discretionaryPercent, 100)}%` }}
+										className={`progress-bar ${
+											progress.discretionaryPercent > 100
+												? "over-budget"
+												: "on-track"
+										}`}
+										style={{
+											width: `${Math.min(progress.discretionaryPercent, 100)}%`,
+										}}
 									></div>
 								</div>
 								<p className="progress-status">
-									{progress.discretionaryPercent}% of budget {progress.discretionaryPercent > 100 ? "⚠️ Over" : "✓ On Track"}
+									{progress.discretionaryPercent}% of budget{" "}
+									{progress.discretionaryPercent > 100
+										? "⚠️ Over"
+										: "✓ On Track"}
 								</p>
 							</div>
 
@@ -254,20 +301,35 @@ export default function Profile() {
 							<div className="progress-item savings-item">
 								<div className="progress-label">
 									<span>Savings Potential</span>
-									<span className={progress.remaining >= 0 ? "amount-positive" : "amount-negative"}>
+									<span
+										className={
+											progress.remaining >= 0
+												? "amount-positive"
+												: "amount-negative"
+										}
+									>
 										${Math.abs(progress.remaining).toFixed(2)}
 									</span>
 								</div>
-								
+
 								{progress.remaining >= 0 ? (
 									// Positive savings
 									<div className="savings-positive">
 										<div className="savings-message">
 											<span className="savings-icon">✨</span>
-											<p>Great news! You can save <strong>${progress.remaining.toFixed(2)}/month</strong></p>
+											<p>
+												Great news! You can save{" "}
+												<strong>${progress.remaining.toFixed(2)}/month</strong>
+											</p>
 										</div>
 										<div className="savings-breakdown">
-											<p className="breakdown-text">That's <strong>${(progress.remaining * 12).toFixed(2)} per year</strong> towards your goals!</p>
+											<p className="breakdown-text">
+												That's{" "}
+												<strong>
+													${(progress.remaining * 12).toFixed(2)} per year
+												</strong>{" "}
+												towards your goals!
+											</p>
 											<div className="savings-options">
 												<div className="option">
 													<span className="option-icon">🎯</span>
@@ -292,7 +354,7 @@ export default function Profile() {
 												</div>
 											</div>
 										</div>
-										<button 
+										<button
 											className="btn-create-goal"
 											onClick={() => navigate("/create-budget-plan")}
 										>
@@ -304,15 +366,25 @@ export default function Profile() {
 									<div className="savings-negative">
 										<div className="savings-message">
 											<span className="savings-icon">⚠️</span>
-											<p>You're spending <strong>${Math.abs(progress.remaining).toFixed(2)}/month more</strong> than your income</p>
+											<p>
+												You're spending{" "}
+												<strong>
+													${Math.abs(progress.remaining).toFixed(2)}/month more
+												</strong>{" "}
+												than your income
+											</p>
 										</div>
-										<p className="message-subtitle">Let's find ways to help you start saving:</p>
-										<button 
+										<p className="message-subtitle">
+											Let's find ways to help you start saving:
+										</p>
+										<button
 											className="btn-saving-steps"
 											onClick={handleGenerateSavingSteps}
 											disabled={loadingSteps}
 										>
-											{loadingSteps ? "Generating steps..." : "💡 Show Me Saving Steps"}
+											{loadingSteps
+												? "Generating steps..."
+												: "💡 Show Me Saving Steps"}
 										</button>
 									</div>
 								)}
@@ -327,13 +399,21 @@ export default function Profile() {
 							</div>
 							<div className="stat-card">
 								<h4>Remaining</h4>
-								<p className={progress.remaining >= 0 ? "positive" : "negative"}>
+								<p
+									className={progress.remaining >= 0 ? "positive" : "negative"}
+								>
 									${progress.remaining.toFixed(2)}
 								</p>
 							</div>
 							<div className="stat-card">
 								<h4>Budget Used</h4>
-								<p>{((progress.totalExpenses / progress.monthlyIncome) * 100).toFixed(1)}%</p>
+								<p>
+									{(
+										(progress.totalExpenses / progress.monthlyIncome) *
+										100
+									).toFixed(1)}
+									%
+								</p>
 							</div>
 						</section>
 					</div>
@@ -342,23 +422,27 @@ export default function Profile() {
 
 			{/* Saving Steps Modal */}
 			{showSavingSteps && savingSteps && (
-				<div className="modal-overlay" onClick={() => setShowSavingSteps(false)}>
+				<div
+					className="modal-overlay"
+					onClick={() => setShowSavingSteps(false)}
+				>
 					<div className="modal-content" onClick={(e) => e.stopPropagation()}>
 						<div className="modal-header">
 							<h2>💡 Steps to Start Saving</h2>
-							<button 
+							<button
 								className="modal-close"
 								onClick={() => setShowSavingSteps(false)}
 							>
 								✕
 							</button>
 						</div>
-						
+
 						<div className="modal-body">
 							<p className="modal-intro">
-								Here are actionable steps you can take right now to free up money and start saving:
+								Here are actionable steps you can take right now to free up
+								money and start saving:
 							</p>
-							
+
 							<div className="steps-list">
 								{savingSteps.steps.map((step, index) => (
 									<div key={index} className="step-item">
@@ -373,17 +457,22 @@ export default function Profile() {
 							{savingSteps.potentialSavings && (
 								<div className="potential-savings">
 									<span className="savings-icon">💰</span>
-									<p><strong>Potential Monthly Savings:</strong> ${savingSteps.potentialSavings.toFixed(2)}</p>
+									<p>
+										<strong>Potential Monthly Savings:</strong> $
+										{savingSteps.potentialSavings.toFixed(2)}
+									</p>
 								</div>
 							)}
 
 							{savingSteps.source === "ai" && (
-								<p className="ai-note">🤖 Generated by AI based on your profile</p>
+								<p className="ai-note">
+									🤖 Generated by AI based on your profile
+								</p>
 							)}
 						</div>
 
 						<div className="modal-footer">
-							<button 
+							<button
 								className="btn-create-goal"
 								onClick={() => {
 									setShowSavingSteps(false);
@@ -392,7 +481,7 @@ export default function Profile() {
 							>
 								Create Savings Goal
 							</button>
-							<button 
+							<button
 								className="btn-close"
 								onClick={() => setShowSavingSteps(false)}
 							>
