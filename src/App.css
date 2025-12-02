@@ -2,24 +2,35 @@
 /* Summit Funds - Professional Business Design */
 /* Color Scheme: Primary Blue #2D6CDF, Secondary #A3C7FF, Accent #304FFE */
 
-/* CSS VARIABLES - Professional Color Palette */
+/* CSS VARIABLES - Summit Funds Complete Color Palette */
 :root {
-  /* Exact Professional Color Palette */
-  --primary-blue: #2D6CDF;
-  --secondary-blue: #A3C7FF;
-  --accent-indigo: #304FFE;
-  --text-dark: #1B1F23;
-  --background: #FFFFFF;
-  --white: #FFFFFF;
-  --card-bg: rgba(163, 199, 255, 0.1);
-  --card-bg-light: rgba(163, 199, 255, 0.05);
-  --light-gray: #F8F9FA;
-  --medium-gray: #E5E7EB;
-  --border-color: rgba(45, 108, 223, 0.15);
-  --success: #10B981;
-  --warning: #F59E0B;
-  --danger: #EF4444;
-  --info: #06B6D4;
+  /* 📘 Primary Color Palette */
+  --primary-blue: #2D6CDF;     /* Main Brand Color */
+  --secondary-blue: #A3C7FF;   /* Light UI Elements */
+  --accent-indigo: #304FFE;    /* Strong Callouts */
+  
+  /* 🎨 Neutral Colors */
+  --text-dark: #1B1F23;        /* Main Text */
+  --off-white: #FAFAFC;        /* Page Background */
+  --white: #FFFFFF;            /* Cards & Contrast */
+  --background: #FFFFFF;       /* Legacy support */
+  
+  /* 🔧 Utility Backgrounds */
+  --card-bg: rgba(163, 199, 255, 0.1);      /* 10% secondary blue */
+  --card-bg-light: rgba(163, 199, 255, 0.05); /* 5% secondary blue */
+  --border-color: rgba(45, 108, 223, 0.15); /* 15% primary blue */
+  
+  /* ✅ Semantic Colors (Feedback) */
+  --success: #10B981;          /* Success Green */
+  --warning: #F59E0B;          /* Warning Orange */
+  --danger: #EF4444;           /* Danger Red */
+  --info: #06B6D4;             /* Info Cyan */
+  
+  /* 🎨 Semantic Background Colors (10% opacity) */
+  --success-bg: rgba(16, 185, 129, 0.1);
+  --warning-bg: rgba(245, 158, 11, 0.1);
+  --danger-bg: rgba(239, 68, 68, 0.1);
+  --info-bg: rgba(6, 182, 212, 0.1);
   
   /* Professional Shadows */
   --shadow-xs: 0 1px 2px 0 rgba(27, 31, 35, 0.04);
@@ -52,7 +63,7 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   line-height: 1.6;
   color: var(--text-dark);
-  background: #FFFFFF !important;
+  background: var(--off-white) !important;
   font-weight: 400;
   transition: all var(--transition-standard);
   overflow-x: hidden;
@@ -62,6 +73,61 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* ===== SUMMIT FUNDS UTILITY CLASSES ===== */
+
+/* 📝 Text Colors */
+.text-primary { color: var(--primary-blue) !important; }
+.text-secondary { color: var(--secondary-blue) !important; }
+.text-accent { color: var(--accent-indigo) !important; }
+.text-dark { color: var(--text-dark) !important; }
+.text-white { color: var(--white) !important; }
+.text-success { color: var(--success) !important; }
+.text-warning { color: var(--warning) !important; }
+.text-danger { color: var(--danger) !important; }
+.text-info { color: var(--info) !important; }
+
+/* 🎨 Background Colors */
+.bg-primary { background: var(--primary-blue) !important; }
+.bg-secondary { background: var(--secondary-blue) !important; }
+.bg-accent { background: var(--accent-indigo) !important; }
+.bg-white { background: var(--white) !important; }
+.bg-off-white { background: var(--off-white) !important; }
+.bg-card { background: var(--card-bg) !important; }
+.bg-card-light { background: var(--card-bg-light) !important; }
+.bg-success { background: var(--success-bg) !important; }
+.bg-warning { background: var(--warning-bg) !important; }
+.bg-danger { background: var(--danger-bg) !important; }
+.bg-info { background: var(--info-bg) !important; }
+
+/* 🔲 Border Colors */
+.border-primary { border-color: var(--primary-blue) !important; }
+.border-secondary { border-color: var(--secondary-blue) !important; }
+.border-accent { border-color: var(--accent-indigo) !important; }
+.border-light { border-color: var(--border-color) !important; }
+.border-success { border-color: var(--success) !important; }
+.border-warning { border-color: var(--warning) !important; }
+.border-danger { border-color: var(--danger) !important; }
+.border-info { border-color: var(--info) !important; }
+
+/* 🌅 Gradients */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--primary-blue), var(--accent-indigo)) !important;
+}
+.gradient-soft {
+  background: linear-gradient(135deg, var(--white) 0%, var(--card-bg-light) 100%) !important;
+}
+.gradient-secondary {
+  background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue)) !important;
+}
+
+/* 🔳 Shadows */
+.shadow-primary { box-shadow: var(--shadow-primary) !important; }
+.shadow-accent { box-shadow: var(--shadow-accent) !important; }
+.shadow-sm { box-shadow: var(--shadow-sm) !important; }
+.shadow-md { box-shadow: var(--shadow-md) !important; }
+.shadow-lg { box-shadow: var(--shadow-lg) !important; }
+.shadow-xl { box-shadow: var(--shadow-xl) !important; }
 
 /* ===== UNIVERSAL CONTAINER SYSTEM ===== */
 .container {
@@ -131,6 +197,122 @@ body {
 .flex-column { flex-direction: column; }
 .flex-row-reverse { flex-direction: row-reverse; }
 .flex-column-reverse { flex-direction: column-reverse; }
+
+/* ===== SUMMIT FUNDS BUTTON SYSTEM ===== */
+
+/* Base Button Styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
+  text-decoration: none;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--transition-standard);
+  min-height: 44px;
+  gap: 8px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* 🔵 Primary Button */
+.btn-primary {
+  background: var(--primary-blue);
+  color: var(--white);
+  border-color: var(--primary-blue);
+  box-shadow: var(--shadow-primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-indigo);
+  border-color: var(--accent-indigo);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(48, 79, 254, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* 🔷 Secondary Button */
+.btn-secondary {
+  background: var(--white);
+  color: var(--primary-blue);
+  border-color: var(--primary-blue);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--card-bg);
+  color: var(--accent-indigo);
+  border-color: var(--accent-indigo);
+  transform: translateY(-1px);
+}
+
+/* 🟫 Outline Button */
+.btn-outline {
+  background: transparent;
+  color: var(--primary-blue);
+  border-color: var(--border-color);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: var(--card-bg-light);
+  border-color: var(--primary-blue);
+  color: var(--accent-indigo);
+}
+
+/* 🎆 Ghost Button */
+.btn-ghost {
+  background: transparent;
+  color: var(--primary-blue);
+  border-color: transparent;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--card-bg-light);
+  color: var(--accent-indigo);
+}
+
+/* Button Sizes */
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  min-height: 36px;
+}
+
+.btn-lg {
+  padding: 16px 32px;
+  font-size: 1.125rem;
+  min-height: 52px;
+}
+
+.btn-xl {
+  padding: 20px 40px;
+  font-size: 1.25rem;
+  min-height: 60px;
+}
+
+/* Button Variants */
+.btn-block {
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-rounded {
+  border-radius: 50px;
+}
 
 .flex-wrap { flex-wrap: wrap; }
 .flex-nowrap { flex-wrap: nowrap; }
@@ -4448,6 +4630,130 @@ button[type="submit"]:hover,
   content: '⚠';
   font-weight: bold;
   font-size: 1.2rem;
+}
+
+/* ===== SUMMIT FUNDS COMPLETE DESIGN SYSTEM ===== */
+
+/* 🎯 Summit Funds Button System */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
+  text-decoration: none;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--transition-standard);
+  min-height: 44px;
+  gap: 8px;
+  user-select: none;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-primary {
+  background: var(--primary-blue);
+  color: var(--white);
+  border-color: var(--primary-blue);
+  box-shadow: var(--shadow-primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-indigo);
+  border-color: var(--accent-indigo);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(48, 79, 254, 0.3);
+}
+
+.btn-secondary {
+  background: var(--white);
+  color: var(--primary-blue);
+  border-color: var(--primary-blue);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--card-bg);
+  color: var(--accent-indigo);
+  border-color: var(--accent-indigo);
+  transform: translateY(-1px);
+}
+
+/* 🎨 Summit Funds Card System */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-standard);
+}
+
+.card:hover {
+  border-color: var(--primary-blue);
+  box-shadow: var(--shadow-primary);
+  transform: translateY(-2px);
+}
+
+.card-light {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-standard);
+}
+
+.card-elevated {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-top: 3px solid var(--primary-blue);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-standard);
+}
+
+/* 📝 Summit Funds Form System */
+input, textarea, select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--text-dark);
+  background: var(--white);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  transition: all var(--transition-standard);
+  min-height: 44px;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(45, 108, 223, 0.1);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* ===== END PROFESSIONAL CSS CONSOLIDATION ===== */
