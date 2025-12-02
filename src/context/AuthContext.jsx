@@ -21,10 +21,22 @@ export function AuthProvider({ children }) {
 
 	// Check if user is developer on auth state change
 	useEffect(() => {
+		let unsubscribe = () => {};
+		
 		try {
-			const unsubscribe = auth.onAuthStateChanged(
+			// Test if auth is properly initialized
+			if (!auth || typeof auth.onAuthStateChanged !== 'function') {
+				console.error("🔥 Firebase Auth is not properly initialized");
+				setError("Authentication service is unavailable. Using offline mode.");
+				setLoading(false);
+				return;
+			}
+
+			unsubscribe = auth.onAuthStateChanged(
 				(currentUser) => {
+					console.log("👤 Auth state changed:", currentUser?.email || "No user");
 					setUser(currentUser);
+					
 					// Check if developer email
 					if (currentUser?.email === "Braydenmiddlebrooks@gmail.com") {
 						setIsDeveloper(true);
@@ -32,39 +44,71 @@ export function AuthProvider({ children }) {
 					} else {
 						setIsDeveloper(false);
 					}
+					
 					setLoading(false);
 					setError(null); // Clear any previous connection errors
 				},
-				(error) => {
-					console.error("🔥 Firebase Auth Error:", error);
-					setError("Firebase connection failed. Please check your configuration.");
+				(authError) => {
+					console.error("🔥 Firebase Auth Error:", authError);
+					
+					// Handle specific Firebase errors
+					if (authError.code === 'auth/api-key-not-valid' || 
+					    authError.message?.includes('API key not valid')) {
+						setError("Firebase API key is invalid. Using offline mode.");
+					} else {
+						setError(`Authentication error: ${authError.message}`);
+					}
+					
 					setLoading(false);
 				}
 			);
 
-			return unsubscribe;
-		} catch (error) {
-			console.error("🔥 Firebase initialization error:", error);
-			setError("Firebase is not properly configured. Please check your .env file.");
+		} catch (initError) {
+			console.error("🔥 Firebase initialization error:", initError);
+			setError("Firebase authentication is not available. Check your configuration.");
 			setLoading(false);
 		}
+
+		return () => {
+			try {
+				unsubscribe();
+			} catch (cleanupError) {
+				console.warn("Auth cleanup error:", cleanupError);
+			}
+		};
 	}, []);
 
 	// Sign up with email and password
 	const signup = async (email, password) => {
 		setError(null);
 		try {
+			// Check if auth is available
+			if (!auth || typeof auth.currentUser === 'undefined') {
+				throw new Error("Authentication service is not available");
+			}
+
 			const userCredential = await createUserWithEmailAndPassword(
 				auth,
 				email,
 				password
 			);
 			setUser(userCredential.user);
+			console.log("✅ User signed up successfully:", email);
 			return userCredential.user;
 		} catch (err) {
-			const errorMessage = getAuthErrorMessage(err.code);
+			console.error("❌ Signup error:", err);
+			
+			// Handle API key errors specifically
+			if (err.code === 'auth/api-key-not-valid' || 
+			    err.message?.includes('API key not valid')) {
+				const message = "Firebase API key is invalid. Please check the configuration.";
+				setError(message);
+				throw new Error(message);
+			}
+			
+			const errorMessage = getAuthErrorMessage(err.code) || err.message;
 			setError(errorMessage);
-			throw err;
+			throw new Error(errorMessage);
 		}
 	};
 
@@ -72,17 +116,33 @@ export function AuthProvider({ children }) {
 	const login = async (email, password) => {
 		setError(null);
 		try {
+			// Check if auth is available
+			if (!auth || typeof auth.currentUser === 'undefined') {
+				throw new Error("Authentication service is not available");
+			}
+
 			const userCredential = await signInWithEmailAndPassword(
 				auth,
 				email,
 				password
 			);
 			setUser(userCredential.user);
+			console.log("✅ User logged in successfully:", email);
 			return userCredential.user;
 		} catch (err) {
-			const errorMessage = getAuthErrorMessage(err.code);
+			console.error("❌ Login error:", err);
+			
+			// Handle API key errors specifically
+			if (err.code === 'auth/api-key-not-valid' || 
+			    err.message?.includes('API key not valid')) {
+				const message = "Firebase API key is invalid. Authentication unavailable.";
+				setError(message);
+				throw new Error(message);
+			}
+			
+			const errorMessage = getAuthErrorMessage(err.code) || err.message;
 			setError(errorMessage);
-			throw err;
+			throw new Error(errorMessage);
 		}
 	};
 
